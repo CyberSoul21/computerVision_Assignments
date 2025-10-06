@@ -18,8 +18,7 @@ I_matrix = np.hstack((I_3x3, col_zeros))
 #Projection Matrices P1 and P2 // P = K[T_w_c]
 #print("#Projection Matrices P1 and P2 // P = K[T_w_c]")
 P1 = K_c @ I_matrix @ T_c1_w
-#print("P1: ")
-#print(P1)
+#print("P1: ",P1)
 P2 = K_c @ I_matrix @ T_c2_w
-#print("P2: ")
-#print(P2)
+print("P2: ",P2)
+
