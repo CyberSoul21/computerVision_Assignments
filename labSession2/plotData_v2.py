@@ -142,6 +142,7 @@ if __name__ == '__main__':
     drawRefSystem(ax, T_w_c2, '-', 'C2')
 
     ax.scatter(X_w[0, :], X_w[1, :], X_w[2, :], marker='.')
+    #Wilson: Add here you point!
     #plotNumbered3DPoints(ax, X_w, 'r', (0.1, 0.1, 0.1)) # For plotting with numbers (choose one of the both options)
 
     #Matplotlib does not correctly manage the axis('equal')
