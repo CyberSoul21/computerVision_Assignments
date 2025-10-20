@@ -141,7 +141,7 @@ if __name__ == '__main__':
     #**************************************************************************************
     #3.2 Point transfer visualization   
 
-    #visualizeHomographyTransfer(img1, img2, H_from_pose)
+    visualizeHomographyTransfer(img1, img2, H_from_pose)
 
     #**************************************************************************************
 
