@@ -1,0 +1,8 @@
+sudo apt install python3-pip
+sudo apt install python3-full python3-venv
+python3 -m venv ~/venvs/computerVision
+source ~/venvs/computerVision/bin/activate
+
+(computerVision) javier@Tars:~/Documents/CV/labs/Practice0$ pip install -U matplotlib
+(computerVision) javier@Tars:~/Documents/CV/labs/Practice0$ pip install opencv-python
+
