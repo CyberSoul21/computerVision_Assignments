@@ -28,6 +28,9 @@ def drawLine(l,strFormat,lWidth):
       lWidth: line width
     -output: None
     """
+    print("l = ",l)
+    print("l.shape",l.shape)
+    print("l[2] = ",l[2])
     # p_l_y is the intersection of the line with the axis Y (x=0)
     p_l_y = np.array([0, -l[2] / l[1]])
     # p_l_x is the intersection point of the line with the axis X (y=0)

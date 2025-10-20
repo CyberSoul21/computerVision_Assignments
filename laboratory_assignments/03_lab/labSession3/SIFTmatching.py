@@ -61,8 +61,24 @@ def matchWith2NNDR(desc1, desc2, distRatio, minDist):
     for kDesc1 in range(nDesc1):
         dist = np.sqrt(np.sum((desc2 - desc1[kDesc1, :]) ** 2, axis=1))
         indexSort = np.argsort(dist)
-        if (dist[indexSort[0]] < minDist):
+        #close = dist2/dist
+        close_1 = dist[indexSort[0]]
+        close_2 = dist[indexSort[1]]
+        closeRatio = close_1/close_2
+        print("dist[indexSort[0]] = ", dist[indexSort[0]] )
+        print("close_p = ", closeRatio )
+        #then filter close_p < minDist (threshold) # reject falsos positives
+        #TODO: divide by zero, put constraint
+        #By enforcing d1>d2*distRatio
+        #if ((closeRatio < distRatio) and (dist[indexSort[0]] < minDist)):
+        #    matches.append([kDesc1, indexSort[0], dist[indexSort[0]]])
+        #By enforcing d1>d2*distRatio reject false positive
+        # but I want Include then d1<d2*distRatio
+        if (dist[indexSort[0]] < dist[indexSort[1]]*distRatio):
             matches.append([kDesc1, indexSort[0], dist[indexSort[0]]])
+        #Original
+        #if (dist[indexSort[0]] < minDist):
+        #    matches.append([kDesc1, indexSort[0], dist[indexSort[0]]])
     return matches
 
 if __name__ == '__main__':
@@ -72,8 +88,8 @@ if __name__ == '__main__':
     timestamp1 = '1403715282262142976'
     timestamp2 = '1403715413262142976'
 
-    path_image_1 = 'image1.png'
-    path_image_2 = 'image2.png'
+    path_image_1 = 'labSession3/image1.png'
+    path_image_2 = 'labSession3/image2.png'
 
     # Read images
     image_pers_1 = cv2.imread(path_image_1)
@@ -83,10 +99,14 @@ if __name__ == '__main__':
     sift = cv2.SIFT_create(nfeatures=0, nOctaveLayers = 5, contrastThreshold = 0.02, edgeThreshold = 20, sigma = 0.5)
     keypoints_sift_1, descriptors_1 = sift.detectAndCompute(image_pers_1, None)
     keypoints_sift_2, descriptors_2 = sift.detectAndCompute(image_pers_2, None)
-
+    print("descriptors_1: ",descriptors_1)
+    print("descriptors_2: ",descriptors_2)
+    print("descriptors_1.shape(): ",descriptors_1.shape)
+    print("descriptors_2.shape(): ",descriptors_2.shape)
     distRatio = 0.8
     minDist = 500
-    matchesList = matchWith2NDRR(descriptors_1, descriptors_2, distRatio, minDist)
+    #matchesList = matchWith2NDRR(descriptors_1, descriptors_2, distRatio, minDist)
+    matchesList = matchWith2NNDR(descriptors_1, descriptors_2, distRatio, minDist)
     dMatchesList = indexMatrixToMatchesList(matchesList)
     dMatchesList = sorted(dMatchesList, key=lambda x: x.distance)
 
