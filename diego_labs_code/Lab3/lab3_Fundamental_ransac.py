@@ -79,7 +79,7 @@ def ransacFundamental(x1, x2, iterations, threshold):
 
 def compute_epipolar_lines(F, pts1, pts2, img1, img2, n_lines=15):
     """
-    Dibuja líneas epipolares de manera explícita (sin usar OpenCV).
+    Dibuja líneas epipolares
     Para cada punto x1 de la imagen 1, se calcula l2 = F * x1.
     """
 
@@ -248,4 +248,5 @@ if __name__ == "__main__":
 
     print("Rank(F):", np.linalg.matrix_rank(F))
     print("F normalized:\n", F / np.linalg.norm(F))
+
 
