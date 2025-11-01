@@ -1,7 +1,7 @@
 #####################################################################################
 # MRGCV Unizar - Laboratory 3
 # Title: Fundamental Matrix + Automatic Epipolar Lines Visualization
-# Author: Diego Méndez Carter (based on MRGCV course)
+# 
 #####################################################################################
 
 import numpy as np
@@ -248,3 +248,4 @@ if __name__ == "__main__":
 
     print("Rank(F):", np.linalg.matrix_rank(F))
     print("F normalized:\n", F / np.linalg.norm(F))
+
