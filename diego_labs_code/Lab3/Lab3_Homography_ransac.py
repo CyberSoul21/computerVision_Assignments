@@ -104,6 +104,7 @@ def homograhy4Ransac(x1, x2,iterations, ransac_threshold):
         # 2️⃣ Proyecta todos los puntos de x1
         x1_h = np.hstack([x1, np.ones((n_points, 1))])
         projected = (H @ x1_h.T).T
+        #por numpy, transpone y normaliza
         projected = projected[:, :2] / projected[:, [2]]
 
         # 3️⃣ Calcula error

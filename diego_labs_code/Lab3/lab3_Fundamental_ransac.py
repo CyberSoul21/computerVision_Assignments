@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 # Fundamental matrix (8-point algorithm)
 # ==========================================================
 def computeFundamental(x1, x2):
+    #Normalizacion de Hartley
     def normalize_points(points):
         mean = np.mean(points, axis=0)
         centered = points - mean
@@ -50,27 +51,46 @@ def computeFundamental(x1, x2):
 def ransacFundamental(x1, x2, iterations, threshold):
     best_F, best_inliers = None, None
     max_votes = 0
+
+    # Puntos homogéneos
     x1_h = np.hstack([x1, np.ones((x1.shape[0], 1))])
     x2_h = np.hstack([x2, np.ones((x2.shape[0], 1))])
 
     for _ in range(iterations):
+        # Seleccionar 8 puntos aleatorios
         idx = np.random.choice(x1.shape[0], 8, replace=False)
         F = computeFundamental(x1[idx], x2[idx])
-        Fx1 = (F @ x1_h.T).T
-        Ftx2 = (F.T @ x2_h.T).T
-        x2tFx1 = np.sum(x2_h * Fx1, axis=1)
-        error = (x2tFx1 ** 2) / (Fx1[:, 0]**2 + Fx1[:, 1]**2 + Ftx2[:, 0]**2 + Ftx2[:, 1]**2)
 
+        # Líneas epipolares correspondientes
+        Fx1 = (F @ x1_h.T).T      # Líneas en imagen 2
+        Ftx2 = (F.T @ x2_h.T).T   # Líneas en imagen 1
+
+        # Término común de la ecuación epipolar
+        x2tFx1 = np.sum(x2_h * Fx1, axis=1)
+
+        # ---- ERROR GEOMÉTRICO CUADRÁTICO ----
+        # Distancia perpendicular en ambas imágenes
+        d1 = np.abs(x2tFx1) / np.sqrt(Fx1[:, 0]**2 + Fx1[:, 1]**2)
+        d2 = np.abs(x2tFx1) / np.sqrt(Ftx2[:, 0]**2 + Ftx2[:, 1]**2)
+
+        # Error total cuadrático (en píxeles²)
+        error = d1**2 + d2**2
+        # --------------------------------------
+
+        # Inliers por umbral
         inliers = error < threshold
         votes = np.sum(inliers)
 
+        # Actualizar el mejor modelo
         if votes > max_votes:
             max_votes = votes
             best_F = F
             best_inliers = inliers
 
+    # Recalcular F con todos los inliers
     F_final = computeFundamental(x1[best_inliers], x2[best_inliers])
     return F_final, best_inliers
+
 
 
 # ==========================================================
@@ -79,7 +99,7 @@ def ransacFundamental(x1, x2, iterations, threshold):
 
 def compute_epipolar_lines(F, pts1, pts2, img1, img2, n_lines=15):
     """
-    Dibuja líneas epipolares
+    Dibuja líneas epipolares de manera explícita (sin usar OpenCV).
     Para cada punto x1 de la imagen 1, se calcula l2 = F * x1.
     """
 
@@ -222,7 +242,7 @@ if __name__ == "__main__":
     mode = "superglue"  # or "superglue"
 
     img1, img2, srcPts, dstPts = load_matches(mode)
-    F, inliers = ransacFundamental(srcPts, dstPts, iterations=5000, threshold=0.00002)
+    F, inliers = ransacFundamental(srcPts, dstPts, iterations=10000, threshold=0.001)
     print("Fundamental Matrix:\n", F)
     print(f"Inliers: {np.sum(inliers)} / {len(inliers)}")
 
@@ -248,5 +268,3 @@ if __name__ == "__main__":
 
     print("Rank(F):", np.linalg.matrix_rank(F))
     print("F normalized:\n", F / np.linalg.norm(F))
-
-
