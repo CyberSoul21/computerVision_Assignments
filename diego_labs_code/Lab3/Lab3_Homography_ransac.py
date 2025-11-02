@@ -97,30 +97,30 @@ def homograhy4Ransac(x1, x2,iterations, ransac_threshold):
 
     n_points = x1.shape[0]
     for i in range(iterations):
-        # 1️⃣ Selecciona 4 puntos aleatorios
+        # Selecciona 4 puntos aleatorios
         idx = np.random.choice(n_points, 4, replace=False)
         H = compute_homography(x1[idx], x2[idx])
 
-        # 2️⃣ Proyecta todos los puntos de x1
+        # Proyecta todos los puntos de x1
         x1_h = np.hstack([x1, np.ones((n_points, 1))])
         projected = (H @ x1_h.T).T
         #por numpy, transpone y normaliza
         projected = projected[:, :2] / projected[:, [2]]
 
-        # 3️⃣ Calcula error
+        # Calcula error
         errors = np.linalg.norm(x2 - projected, axis=1)
 
-        # 4️⃣ Inliers
+        # Inliers
         inliers = errors < ransac_threshold
         votes = np.sum(inliers)
 
-        # 5️⃣ Guarda mejor H
+        # Guarda mejor H
         if votes > max_votes:
             max_votes = votes
             best_inliers = inliers
             best_H = H
 
-    # 6️⃣ Recalcula H final con los inliers
+    # Recalcula H final con los inliers
     H_final = compute_homography(x1[best_inliers], x2[best_inliers])
     return H_final, best_inliers
 
