@@ -18,10 +18,10 @@ Before attending **Lab Session 1**, students must review the **installation guid
 | **P0** | — | Environment setup and dependency installation | ✅ | — |
 | **P1** | 15 / 16 / 22 Sept. | 2D–3D Geometry in Homogeneous Coordinates and Camera Projection | ✅ | 15h–18h |
 | **P2** | 29 / 30 Sept – 6 Oct. | Homography, Fundamental Matrix, and Two-View Structure from Motion | ✅ | 15h–18h |
-| **P3** | 14 / 15 / 20 Oct. | Robust Estimation of F and H – Guided Matching | ❌ | 15h–18h |
-| **P4** | 27 / 28 Oct – 3 Nov. | Bundle Adjustment and Multiview Geometry | ❌ | 15h–18h |
-| **P5** | 10 / 11 / 17 Nov. | Omnidirectional Vision | ❌ | 15h–18h |
-| **P6** | 24 / 25 Nov – 1 Dec. | Optical Flow | ❌ | 15h–18h |
+| **P3** | 14 / 15 / 20 Oct. | Robust Estimation of F and H – Guided Matching | ✅ | 15h–18h |
+| **P4** | 27 / 28 Oct – 3 Nov. | Bundle Adjustment and Multiview Geometry | ✅ | 15h–18h |
+| **P5** | 10 / 11 / 17 Nov. | Omnidirectional Vision | ✅ | 15h–18h |
+| **P6** | 24 / 25 Nov – 1 Dec. | Optical Flow | ✅ | 15h–18h |
 
 🗣️ **Oral defenses:**  
 - P2–P3: between **27–31 October 2025**  
