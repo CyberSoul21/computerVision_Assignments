@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run main",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/02_BundleAdjustment.py",
+      //"program": "${workspaceFolder}/labSession4/plotGroundTruth.py",
+      //"program": "${workspaceFolder}/labSession4/plotGroundTruthAllison.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": true,
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}
