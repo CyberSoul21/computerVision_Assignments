@@ -67,7 +67,7 @@ def matchWith2NNDR(desc1, desc2, distRatio, minDist):
         closeRatio = close_1/close_2
         print("dist[indexSort[0]] = ", dist[indexSort[0]] )
         print("close_p = ", closeRatio )
-        #then filter close_p < minDist (threshold) # reject falsos positives
+        #then filter close_p < minDist (threshold) # reject false positives
         #TODO: divide by zero, put constraint
         #By enforcing d1>d2*distRatio
         #if ((closeRatio < distRatio) and (dist[indexSort[0]] < minDist)):
@@ -79,7 +79,10 @@ def matchWith2NNDR(desc1, desc2, distRatio, minDist):
         #Original
         #if (dist[indexSort[0]] < minDist):
         #    matches.append([kDesc1, indexSort[0], dist[indexSort[0]]])
+
     return matches
+    
+
 
 if __name__ == '__main__':
     np.set_printoptions(precision=4, linewidth=1024, suppress=True)
@@ -88,8 +91,8 @@ if __name__ == '__main__':
     timestamp1 = '1403715282262142976'
     timestamp2 = '1403715413262142976'
 
-    path_image_1 = 'labSession3/image1.png'
-    path_image_2 = 'labSession3/image2.png'
+    path_image_1 = 'image1.png'
+    path_image_2 = 'image2.png'
 
     # Read images
     image_pers_1 = cv2.imread(path_image_1)
@@ -103,12 +106,13 @@ if __name__ == '__main__':
     print("descriptors_2: ",descriptors_2)
     print("descriptors_1.shape(): ",descriptors_1.shape)
     print("descriptors_2.shape(): ",descriptors_2.shape)
-    distRatio = 0.8
-    minDist = 500
+    distRatio = 0.75
+    minDist = 240
     #matchesList = matchWith2NDRR(descriptors_1, descriptors_2, distRatio, minDist)
     matchesList = matchWith2NNDR(descriptors_1, descriptors_2, distRatio, minDist)
     dMatchesList = indexMatrixToMatchesList(matchesList)
     dMatchesList = sorted(dMatchesList, key=lambda x: x.distance)
+
 
     # Plot the first 10 matches
     imgMatched = cv2.drawMatches(image_pers_1, keypoints_sift_1, image_pers_2, keypoints_sift_2, dMatchesList[:100],
