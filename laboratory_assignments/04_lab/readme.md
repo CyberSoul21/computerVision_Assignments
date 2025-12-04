@@ -55,3 +55,47 @@ F_21 = [
  [-0.00015211, -0.00004897, 0.60030525],
  [-0.30234655, -0.71224975, 100.]
 ]
+```
+
+Script `plotGroundTruth.py` for 3D visualization.
+
+Code from Laboratory Session 2 for initial pose estimation.
+
+Ground truth camera poses, 3D points, and scale information.
+
+---
+
+# **1. Line Fitting with Least Squares**
+
+## **1.1 Theoretical Concepts**
+
+This section should explain:
+
+- What residuals are in an optimization problem  
+- Why the least-squares method minimizes **resᵀ res**  
+- The idea of "best fit" through squared error  
+- Minimal number of parameters to describe a 2D line  
+- Geometric interpretation of the residual as point–line distance  
+
+---
+
+## **1.2 Implementation**
+
+Steps to document:
+
+1. Load the 2D points `xData`.  
+2. Define initial model parameters `Op`.  
+3. Implement `resLineFitting(Op, xData)` returning a vector of residuals.  
+4. Call `least_squares` using Levenberg–Marquardt.  
+5. Analyze convergence and optimization behavior.  
+
+Example:
+
+```python
+OpOptim = scOptim.least_squares(
+    resLineFitting,
+    Op,
+    args=(xData,),
+    method='lm'
+)
+
