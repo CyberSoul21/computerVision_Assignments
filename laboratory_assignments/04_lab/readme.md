@@ -82,7 +82,7 @@ prediction made by a model:
 
 
 $$
-r_i = y_i - \hat{y}_i
+r_i = y_i - \hat{y}_i 
 $$
 
 
@@ -227,22 +227,25 @@ E = K^\top F K
 $$
 
 3. **Decompose \(E\)** into the four possible camera poses:
+   
 $$
 (R, t),\; (R, -t),\; (R', t),\; (R', -t)
 $$
 
-4. **Prepare 2D points** for triangulation  
+5. **Prepare 2D points** for triangulation  
    - Convert homogeneous points to (u, v)
 
-5. **Select the physically correct pose** using the cheirality condition:  
+6. **Select the physically correct pose** using the cheirality condition:  
    Points must satisfy:
+
 $$
 Z_1 > 0 \quad \text{and} \quad Z_2 > 0
 $$
 
-6. **Triangulate initial 3D points** using the selected pose.
+8. **Triangulate initial 3D points** using the selected pose.
 
-7. **Construct the initial transformation**
+9. **Construct the initial transformation**
+    
 $$
 T_{21} = \begin{bmatrix} R_{21} & t_{21} \\ 0 & 1 \end{bmatrix}
 $$
@@ -252,16 +255,17 @@ $$
 ### **Step 2 — Initial Residual Visualization**
 
 1. **Project initial 3D points** onto both cameras:
+   
 $$
 \hat{x}_1 = K[I|0]X,\qquad 
 \hat{x}_2 = K[R_{21}|t_{21}]X
 $$
 
-2. **Normalize projections** (divide by \(z\)).
+3. **Normalize projections** (divide by \(z\)).
 
-3. **Plot observed vs. projected points** to visualize initial reprojection error.
+4. **Plot observed vs. projected points** to visualize initial reprojection error.
 
-4. **Project ground-truth 3D points** for comparison before optimization.
+5. **Project ground-truth 3D points** for comparison before optimization.
 
 ---
 
