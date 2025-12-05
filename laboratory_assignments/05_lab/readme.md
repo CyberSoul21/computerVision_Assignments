@@ -257,19 +257,11 @@ $$
 
 ---
 
-## 🎯 Output  
+## Output  
 
 | Output | Shape | Description |
 |--------|--------|-------------|
 | `rays` | `(3,)` or `(N,3)` | 3D direction vectors |
-
----
-
-##  Image Placeholder  
-
-```
-![Unprojection](images/unprojection.png)
-```
 
 ---
 
@@ -329,14 +321,43 @@ def testingKannalaBrandt():
 ```
 
 ---
-
-## 🖼️ Image Placeholder  
-
 ```
-![Testing](images/testing.png)
-```
+Kannala-Brandt Camera Model
+K =
+ [[283.98181152   0.         421.60400391]
+ [  0.         284.94570923 395.45230103]
+ [  0.           0.           1.        ]]
+D = [-0.00233686  0.037855   -0.03575607  0.00599863]
 
----
+=== Given pixels (ground truth) ===
+[[503.387  450.1594]
+ [267.9465 580.4671]
+ [441.0609 493.0671]]
+
+=== Projected pixels (our KB implementation) ===
+[[503.38703145 450.1593793 ]
+ [267.94653137 580.46712542]
+ [441.06092003 493.06708726]]
+
+=== Pixel reprojection error per point (in pixels) ===
+Point X1: error = 0.000038 px
+Point X2: error = 0.000040 px
+Point X3: error = 0.000024 px
+
+=== Unprojected rays (unit length) ===
+[[ 0.28221615  0.18814425  0.94072089]
+ [-0.47673139  0.57207747  0.66742381]
+ [ 0.06711554  0.33557807  0.93961847]]
+
+=== Angular error between original X direction and unprojected ray ===
+Point 1: 0.00000754 degrees
+Point 2: 0.00000714 degrees
+Point 3: 0.00000468 degrees
+==================================================
+
+This module implements projection and unprojection for fisheye cameras.
+```
+----
 
 #  References  
 
