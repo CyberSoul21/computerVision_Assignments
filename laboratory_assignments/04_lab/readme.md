@@ -141,6 +141,77 @@ def resBundleProjection(Op, x1Data, x2Data, K_c, nPoints):
     Residuals between predicted projections and measured 2D points.
     """
 ```
+This section should explain:
+
+- Parameter vector construction:  
+  **Op = [θ₂₁, t₂₁, X₁_points]**
+- Minimal rotation parameterization using **θ ∈ so(3)**
+- Exponential map to compute **R** from **θ**
+- Projection formula:  
+  **x̂ = K (R X + t)**
+- Residual per point:  
+  **r = x_measured – x̂**
+
+---
+
+## **2.3 Bundle Adjustment (Two Views)**
+
+### **Steps:**
+
+- Build **Op** with rotation, translation, and 3D points  
+- Implement projection for both views  
+- Call `least_squares()`  
+- Analyze:  
+  - Residual magnitude  
+  - Convergence  
+  - Improvement of 3D structure  
+- Visualize final reconstruction  
+
+**Figure:**  
+*(Insert when available)*
+
+---
+
+## **2.4 Comparison with Ground Truth**
+
+### **Include:**
+
+- Plot of estimated vs. true camera poses  
+- Plot of reconstructed vs. true 3D points  
+- Numerical error analysis  
+
+**Example figure:**  
+*(Insert when available)*
+
+---
+
+# **3. Perspective-n-Point (PnP) for View 3**
+
+### **Steps:**
+
+1. Take the 3D points from initial BA  
+2. Extract the 2D correspondences in image 3  
+3. Format image points to shape **(N, 1, 2)**  
+4. Call `solvePnP` using `cv2.SOLVEPNP_EPNP`  
+5. Convert rotation vector to matrix using **Rodrigues**  
+6. Build transformation **T₃₁**  
+
+### **Example:**
+
+```python
+imagePoints = np.ascontiguousarray(
+    x[0:2, :].T
+).reshape((x.shape[1], 1, 2))
+
+retval, rvec, tvec = cv2.solvePnP(
+    objectPoints,
+    imagePoints,
+    K_c,
+    np.zeros(5),
+    flags=cv2.SOLVEPNP_EPNP
+)
+```
+
 
 
 
