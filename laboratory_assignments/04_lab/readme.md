@@ -493,8 +493,6 @@ Reconstruction of the 3 cameras:
 
 # **4. Bundle Adjustment with Three Views**
 
-### **You should explain:**
-
 # **3-View Bundle Adjustment Pipeline (Summary)**
 
 ## **1. Load Data**
@@ -579,15 +577,6 @@ for cameras 2 and 3.
 This provides the final geometric reconstruction of the 3-view system.
 
 
----
-
-### **Steps:**
-
-1. Build the extended **Op**  
-2. Implement residuals for all three views  
-3. Execute `least_squares()`  
-4. Scale the final reconstruction  
-5. Visualize the entire system  
 
 **Figure:**  
 <img width="1896" height="702" alt="image" src="https://github.com/user-attachments/assets/0f03f59d-1d57-4b77-8bc0-3db789524e27" />
