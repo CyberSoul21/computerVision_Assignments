@@ -221,27 +221,28 @@ Pipeline steps:
 ### **Step 1 — Initial Pose from the Essential Matrix**
 
 1. **Compute the Essential Matrix**
+
    $$
    E = K^\top F K
    $$
 
-2. **Decompose \(E\)** into the four possible camera poses:
+3. **Decompose \(E\)** into the four possible camera poses:
    $$
    (R, t),\; (R, -t),\; (R', t),\; (R', -t)
    $$
 
-3. **Prepare 2D points** for triangulation  
+4. **Prepare 2D points** for triangulation  
    - Convert homogeneous points to (u, v)
 
-4. **Select the physically correct pose** using the cheirality condition:  
+5. **Select the physically correct pose** using the cheirality condition:  
    Points must satisfy:
    $$
    Z_1 > 0 \quad \text{and} \quad Z_2 > 0
    $$
 
-5. **Triangulate initial 3D points** using the selected pose.
+6. **Triangulate initial 3D points** using the selected pose.
 
-6. **Construct the initial transformation**
+7. **Construct the initial transformation**
    $$
    T_{21} =
    \begin{bmatrix}
