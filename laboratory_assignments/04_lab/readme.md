@@ -201,13 +201,93 @@ Example figure:
 
 You should document:
 
-- How to compute the essential matrix:  
-  **E = Kᵀ F K**
-- Constraints of the essential matrix (two equal singular values)  
-- Recovery of **R** and **t** through SVD decomposition  
-- Four-solution ambiguity  
-- Correct solution selection using **cheirality**  
-- Initial linear triangulation of points  
+## **Overview — Initial Two-View Geometry**
+
+### **Essential Matrix**
+- Converts the Fundamental matrix into calibrated geometry:
+
+$$
+E = K^{T} F K
+$$
+
+- Encodes only the relative rotation and translation.
+
+---
+
+### **Essential Matrix Constraints**
+- The essential matrix must have **two identical singular values** and the **third equal to zero**.
+
+(SVD enforcement)
+
+$$
+\Sigma = \text{diag}(1,\,1,\,0)
+$$
+
+---
+
+### **Recovering \(R\) and \(t\)**
+- Using SVD decomposition \(E = U \Sigma V^{T}\), motion is extracted:
+
+Rotation candidates:
+
+$$
+R = U\,W\,V^{T}
+$$
+
+where  
+
+$$
+W = 
+\begin{bmatrix}
+0 & -1 & 0 \\
+1 & 0 & 0 \\
+0 & 0 & 1
+\end{bmatrix}
+$$
+
+Translation direction:
+
+$$
+t = U[:, 2]
+$$
+
+---
+
+### **Four-Solution Ambiguity**
+- The decomposition yields four possible motion pairs:
+
+$$
+(R_1,\, t),\quad (R_1,\,-t),\quad (R_2,\, t),\quad (R_2,\,-t)
+$$
+
+---
+
+### **Cheirality Check**
+- The physically correct pose is the one where triangulated points satisfy:
+
+$$
+Z_1 > 0
+$$
+
+and
+
+$$
+Z_2 > 0
+$$
+
+(Points must lie **in front of both cameras**.)
+
+---
+
+### **Initial Linear Triangulation**
+- 3D points are estimated by solving the linear camera projection equations:
+
+$$
+x = P X
+$$
+
+Result: a first approximation of the scene structure before applying BA.
+
 
 Pipeline steps:
 
