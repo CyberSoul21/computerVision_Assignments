@@ -212,6 +212,50 @@ retval, rvec, tvec = cv2.solvePnP(
 )
 ```
 
+### **Visualization:**
 
+*(Insert corresponding figure)*
 
+---
+
+# **4. Bundle Adjustment with Three Views**
+
+### **You should explain:**
+
+- Extended parameter vector:  
+  **Op = [θ₂₁, t₂₁, θ₃₁, t₃₁, X₃D]**
+- Degrees of freedom:  
+  - **Camera 1 → fixed**  
+  - **Cameras 2 & 3 → rotation + translation**
+- Combined residuals for three-view projections  
+- Increase in parameter count and constraints  
+- Final scaling using **T₁₂** from ground truth  
+
+---
+
+### **Steps:**
+
+1. Build the extended **Op**  
+2. Implement residuals for all three views  
+3. Execute `least_squares()`  
+4. Scale the final reconstruction  
+5. Visualize the entire system  
+
+**Figure:**  
+*(Insert when available)*
+
+---
+
+# **Appendix A — Rotation Representation in SO(3)**
+
+### **Helpful code:**
+
+```python
+def crossMatrix(x):
+    return np.array([
+        [0, -x[2], x[1]],
+        [x[2], 0, -x[0]],
+        [-x[1], x[0], 0]
+    ])
+```
 
