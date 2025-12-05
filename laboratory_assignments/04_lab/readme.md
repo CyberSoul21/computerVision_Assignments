@@ -1,4 +1,4 @@
-# **Laboratory Session 4 — Bundle Adjustment & Multiview Geometry**  
+  # **Laboratory Session 4 — Bundle Adjustment & Multiview Geometry**  
 *(Computer Vision — UNIZAR)*  
 :contentReference[oaicite:0]{index=0}
 
@@ -267,20 +267,6 @@ $$
 
 5. **Project ground-truth 3D points** for comparison before optimization.
 
----
-
-### **Goal of These Steps**
-
-- Obtain a **valid initial pose** \(T_{21}\)  
-- Generate an **initial 3D structure**  
-- Evaluate the **initial residuals**  
-- Prepare everything needed for **Bundle Adjustment**
-
----
-
-
----
-
 ## **2.2 Residual Function**
 
 Template:
@@ -301,6 +287,70 @@ This section should explain:
   **x̂ = K (R X + t)**
 - Residual per point:  
   **r = x_measured – x̂**
+
+  ## **Step 3 — Bundle Adjustment (Two Views)**
+
+### **1. Compute ground-truth baseline length**
+- Invert GT poses to obtain camera-to-world transforms.  
+- Compute relative pose:
+
+$$
+T_{12}^{GT} = T_{c1}^{w^{-1}} \, T_{c2}^{w}
+$$
+
+- Extract translation vector \(t_{12}\).  
+- Compute baseline magnitude:
+
+$$
+\|t_{12}\| = \text{baseline length (meters)}
+$$
+
+- Used to **scale the BA results** (monocular geometry has unknown scale).
+
+---
+
+### **2. Run Bundle Adjustment**
+Call the optimizer:
+
+```python
+T_21_opt, X1_opt, res_init, res_final = bundleAdjustment(
+    x1Data, x2Data, K_c, T_21_init, X1_init, normal_t12
+)
+```
+### **What BA optimizes jointly**
+- Rotation: \(R_{21}\)  
+- Translation: \(t_{21}\)  
+- 3D points: \(X_1\)
+
+---
+
+### **Optimization objective**
+
+$$
+\min \sum_i 
+\left\| x_{1,i} - \hat{x}_{1,i} \right\|^2
++
+\left\| x_{2,i} - \hat{x}_{2,i} \right\|^2
+$$
+
+---
+
+### **Projection model**
+
+$$
+\hat{x} = K(RX + t)
+$$
+
+---
+
+### **Outputs of the BA step**
+- `T_21_opt` → optimized camera pose  
+- `X1_opt` → optimized 3D points  
+- `res_init` → residuals before BA  
+- `res_final` → residuals after BA  
+
+---
+
 
 ---
 
