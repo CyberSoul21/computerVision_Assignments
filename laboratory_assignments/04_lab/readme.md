@@ -53,7 +53,7 @@ The goal is to understand how real 3D reconstruction systems based on epipolar g
 F_21 = [
  [0.00022244, 0.000624  , 0.10418026],
  [-0.00015211, -0.00004897, 0.60030525],
- [-0.30234655, -0.71224975, 100.]
+ [-0.30234655, -0.712 24975, 100.]
 ]
 ```
 
@@ -215,7 +215,68 @@ Pipeline steps:
 2. Convert to **E**  
 3. Extract candidate (**R**, **t**) pairs  
 4. Select the valid configuration  
-5. Triangulate 3D points in camera 1 reference  
+5. Triangulate 3D points in camera 1 reference
+## **Before Bundle Adjustment: Initial Pose & 3D Reconstruction**
+
+### **Step 1 — Initial Pose from the Essential Matrix**
+
+1. **Compute the Essential Matrix**
+   $$
+   E = K^\top F K
+   $$
+
+2. **Decompose \(E\)** into the four possible camera poses:
+   $$
+   (R, t),\; (R, -t),\; (R', t),\; (R', -t)
+   $$
+
+3. **Prepare 2D points** for triangulation  
+   - Convert homogeneous points to (u, v)
+
+4. **Select the physically correct pose** using the cheirality condition:  
+   Points must satisfy:
+   $$
+   Z_1 > 0 \quad \text{and} \quad Z_2 > 0
+   $$
+
+5. **Triangulate initial 3D points** using the selected pose.
+
+6. **Construct the initial transformation**
+   $$
+   T_{21} =
+   \begin{bmatrix}
+   R_{21} & t_{21} \\
+   0 & 1
+   \end{bmatrix}
+   $$
+
+---
+
+### **Step 2 — Initial Residual Visualization**
+
+1. **Project initial 3D points** onto both cameras:
+   $$
+   \hat{x}_1 = K[I|0]X,\qquad 
+   \hat{x}_2 = K[R_{21}|t_{21}]X
+   $$
+
+2. **Normalize projections** (divide by \(z\)).
+
+3. **Plot observed vs. projected points** to visualize initial reprojection error.
+
+4. **Project ground-truth 3D points** for comparison before optimization.
+
+---
+
+### **Goal of These Steps**
+
+- Obtain a **valid initial pose** \(T_{21}\)  
+- Generate an **initial 3D structure**  
+- Evaluate the **initial residuals**  
+- Prepare everything needed for **Bundle Adjustment**
+
+---
+
 
 ---
 
