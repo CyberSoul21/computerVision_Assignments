@@ -318,14 +318,176 @@ This prediction is what produces the residuals that BA tries to minimize.
 
 # **3. Perspective-n-Point (PnP) for View 3**
 
+The goal of this section is to estimate the **pose of camera 3** with respect to **camera 1** using:
+
+- The **3D points** reconstructed in Section 2  
+- The **2D matched points** detected in image 3  
+
+
 ### **Steps:**
 
-1. Take the 3D points from initial BA  
-2. Extract the 2D correspondences in image 3  
-3. Format image points to shape **(N, 1, 2)**  
-4. Call `solvePnP` using `cv2.SOLVEPNP_EPNP`  
-5. Convert rotation vector to matrix using **Rodrigues**  
-6. Build transformation **T₃₁**  
+1. **Initial pose estimation** (cameras 1 & 2) using the Essential Matrix  
+2. **Bundle Adjustment** to refine pose and 3D structure  
+3. **PnP** to estimate the pose of camera 3  
+4. **Validation and visualization**
+
+# **Explanation of the Complete Pipeline Code (BA + PnP)**
+
+This script implements the full 3-camera reconstruction pipeline:
+
+1. **Initial pose estimation** (cameras 1 & 2) using the Essential Matrix  
+2. **Bundle Adjustment** to refine pose and 3D structure  
+3. **PnP** to estimate the pose of camera 3  
+4. **Validation and visualization**
+
+Below are the important conceptual actions of each part of the code.
+
+---
+
+## **1. Loading Data**
+
+The script loads:
+
+- 2D keypoints for **three cameras** (`x1Data`, `x2Data`, `x3Data`)
+- Camera intrinsics `K_c`
+- Precomputed fundamental matrix `F_21`
+- Ground truth camera poses and 3D points
+
+These are the inputs required for:
+
+- Essential matrix estimation  
+- Initial triangulation  
+- PnP  
+- Error evaluation  
+
+---
+
+## **2. Initial Pose from Essential Matrix**
+
+The code:
+
+- Computes the **essential matrix** using  
+  `E = essentialMatrix(F_21, K_c)`
+- Decomposes \(E\) into **four possible (R,t) solutions**
+- Uses **cheirality + triangulation** via  
+  `selectCorrectPose()`  
+  to identify the physically valid configuration.
+
+This produces:
+
+- **Initial relative pose** \(T_{21}\)  
+- **Initial 3D points** triangulated from the first two cameras  
+
+This serves as the **starting point** for Bundle Adjustment.
+
+---
+
+## **3. Bundle Adjustment (Cameras 1 & 2)**
+
+Before running BA, the code:
+
+- Computes the **true scale** from the ground-truth baseline  
+- Passes this to the optimizer so the BA result can be scaled to meters
+
+The call:
+
+```python
+T_21_opt, X1_opt, _, _ = bundleAdjustment(...)
+````
+
+### **Returns of the Bundle Adjustment Step**
+
+- **Optimized camera pose** between cameras 1 and 2  
+- **Optimized 3D structure**  
+- **Initial and final residuals** (for evaluation)
+
+BA refines:
+
+- Rotation \( R_{21} \)  
+- Translation \( t_{21} \)  
+- All 3D points \( X_1 \)  
+
+making them consistent with the real image measurements.
+
+---
+
+# **4. PnP for Camera 3**
+
+Once the 3D points are refined by BA, the pose of **camera 3** is estimated.
+
+### **Key operations:**
+
+- `objectPoints = X1_opt.T` → 3D world points  
+- `imagePoints = ... reshape((N,1,2))` (OpenCV-required format)  
+- Solve PnP using EPnP:
+retval, rvec, tvec = cv2.solvePnP(...
+
+
+- Convert rotation vector → rotation matrix using **Rodrigues**  
+- Build full transformation:
+
+\[
+T_{31}
+\]
+
+This produces the **initial pose of camera 3** before multi-view BA.
+
+---
+
+# **5. Reprojection Error for Camera 3**
+
+To evaluate the PnP pose:
+
+- Transform 3D points using \( T_{31} \)  
+- Project them with intrinsics \( K_c \)  
+- Compare projected points with real image points  
+- Compute RMS reprojection error  
+
+This quantifies the **accuracy of the PnP pose estimate**.
+
+---
+
+# **6. Comparison with Ground Truth**
+
+The script compares:
+
+- Estimated camera 3 pose vs. ground truth  
+- Optimized 3D points vs. ground truth 3D structure  
+
+Validates correctness of:
+
+- Essential matrix initialization  
+- Bundle Adjustment  
+- PnP estimation  
+
+---
+
+# **7. Visualization**
+
+### **1. Reprojection in Image 3**
+- Observed points  
+- PnP-projected points  
+- Residual vectors  
+
+### **2. 3D Reconstruction Plot**
+
+Shows:
+
+- Camera 1 frame  
+- Optimized camera 2 frame  
+- PnP-estimated camera 3 frame  
+- Ground truth camera 3 frame  
+- 3D points (optimized and GT)
+
+This visualization represents the **full geometric result of the reconstruction pipeline**.
+<img width="1208" height="863" alt="image" src="https://github.com/user-attachments/assets/748551e7-7ca2-4464-b04c-a835bb709d51" />
+
+<img width="755" height="841" alt="image" src="https://github.com/user-attachments/assets/8f60c0ab-9025-4d8a-bb8a-fef3655ef3c3" />
+
+
+Reconstruction of the 3 cameras: 
+**<img width="1021" height="834" alt="image" src="https://github.com/user-attachments/assets/1d56eeff-775e-4ebb-b38c-c90b29909856" />
+**
 
 ### **Example:**
 
