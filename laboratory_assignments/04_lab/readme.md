@@ -578,11 +578,12 @@ This provides the final geometric reconstruction of the 3-view system.
 
 
 **Figure:**  
-<img width="1896" height="702" alt="image" src="https://github.com/user-attachments/assets/0f03f59d-1d57-4b77-8bc0-3db789524e27" />
+<img width="1823" height="425" alt="image" src="https://github.com/user-attachments/assets/e0524e5b-69bb-4cb7-b1de-81f1add8d93c" />
 
-<img width="892" height="810" alt="image" src="https://github.com/user-attachments/assets/e79a2923-9264-448a-8d11-420fa4d7f360" />
+<img width="712" height="738" alt="image" src="https://github.com/user-attachments/assets/4d39037f-1d34-4a5c-bc60-39a7c2bb4a12" />
 
-<img width="815" height="536" alt="image" src="https://github.com/user-attachments/assets/7fbbe76f-52dc-4344-b349-ad7f6a644d0a" />
+<img width="1850" height="741" alt="image" src="https://github.com/user-attachments/assets/23504c96-edf9-42c1-8e85-14b84aa8140e" />
+
 
 
 # **References**
