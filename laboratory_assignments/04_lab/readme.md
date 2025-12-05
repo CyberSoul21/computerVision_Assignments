@@ -69,13 +69,99 @@ Ground truth camera poses, 3D points, and scale information.
 
 ## **1.1 Theoretical Concepts**
 
-This section should explain:
+The purpose of this first exercise is to introduce the mathematical foundations of
+optimization-based estimation, as used later in Bundle Adjustment. The following
+concepts are essential:
 
-- What residuals are in an optimization problem  
-- Why the least-squares method minimizes **resᵀ res**  
-- The idea of "best fit" through squared error  
-- Minimal number of parameters to describe a 2D line  
-- Geometric interpretation of the residual as point–line distance  
+---
+
+### **Residuals in Optimization**
+
+A residual represents the discrepancy between an observed measurement and the
+prediction made by a model:
+
+\[
+r_i = y_i - \hat{y}_i
+\]
+
+Residuals quantify how well the model explains the data. In optimization-based
+methods, residuals are the quantities that the solver attempts to minimize.
+
+---
+
+### **Least-Squares Minimization**
+
+Least-squares aims to find the parameters that minimize the sum of squared residuals:
+
+\[
+\min \sum_i r_i^2 = r^\top r
+\]
+
+This formulation is widely used because:
+
+- It yields a smooth and differentiable cost function  
+- It penalizes large deviations more strongly  
+- It corresponds to the Maximum Likelihood estimator under Gaussian noise  
+- It has a clear geometric interpretation in Euclidean space  
+
+---
+
+### **“Best Fit” Interpretation**
+
+The best-fitting model is the one that minimizes the overall squared distance
+between the predicted values and the observed data points. This ensures:
+
+- Stability against noise  
+- Reduction of measurement errors  
+- Statistically unbiased estimation under Gaussian assumptions  
+
+---
+
+### **Minimal Parametrization of a 2D Line**
+
+A line in the image plane can be expressed minimally using two parameters:
+
+- **m** – slope  
+- **b** – intercept  
+
+Through:
+
+\[
+y = m x + b
+\]
+
+Other representations such as \( ax + by + c = 0 \) exist, but they introduce an
+additional scale ambiguity and are therefore not minimal.
+
+---
+
+### **Geometric Meaning of a Residual**
+
+A residual in this context represents the **vertical distance** between an observed
+2D point and the line predicted by the model:
+
+\[
+r_i = y_i - (m x_i + b)
+\]
+
+Minimizing these distances forces the fitted line to pass as close as possible to
+all measurements.
+
+---
+
+### **Motivation for This Exercise**
+
+This simple line-fitting problem introduces:
+
+- The structure of residual-based optimization  
+- Parameter vector construction  
+- How Levenberg–Marquardt adjusts parameters  
+- The mathematical framework later used in full Bundle Adjustment  
+
+Although the geometric model is simple, it is based on the same principles used to
+optimize camera poses and 3D structures in multiview geometry.
+
+
 
 ---
 
