@@ -489,26 +489,6 @@ Reconstruction of the 3 cameras:
 **<img width="1021" height="834" alt="image" src="https://github.com/user-attachments/assets/1d56eeff-775e-4ebb-b38c-c90b29909856" />
 **
 
-### **Example:**
-
-```python
-imagePoints = np.ascontiguousarray(
-    x[0:2, :].T
-).reshape((x.shape[1], 1, 2))
-
-retval, rvec, tvec = cv2.solvePnP(
-    objectPoints,
-    imagePoints,
-    K_c,
-    np.zeros(5),
-    flags=cv2.SOLVEPNP_EPNP
-)
-```
-
-### **Visualization:**
-
-*(Insert corresponding figure)*
-
 ---
 
 # **4. Bundle Adjustment with Three Views**
@@ -535,7 +515,14 @@ retval, rvec, tvec = cv2.solvePnP(
 5. Visualize the entire system  
 
 **Figure:**  
-*(Insert when available)*
+<img width="1896" height="702" alt="image" src="https://github.com/user-attachments/assets/0f03f59d-1d57-4b77-8bc0-3db789524e27" />
+
+<img width="892" height="810" alt="image" src="https://github.com/user-attachments/assets/e79a2923-9264-448a-8d11-420fa4d7f360" />
+
+<img width="815" height="536" alt="image" src="https://github.com/user-attachments/assets/7fbbe76f-52dc-4344-b349-ad7f6a644d0a" />
+
+
+
 
 ---
 
