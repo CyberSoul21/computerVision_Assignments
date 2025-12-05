@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run main",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/kannalaBrandt.py", //plot_poseA_cameras_and_points
+      //"program": "${workspaceFolder}/fisheyeTriangulationV3.py",
+      //"program": "${workspaceFolder}/plot_poseA_cameras_and_points.py", //overlay_reprojection_poseA.py
+      //"program": "${workspaceFolder}/overlay_reprojection_poseA.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": true,
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}
