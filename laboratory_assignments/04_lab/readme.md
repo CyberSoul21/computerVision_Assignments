@@ -495,14 +495,89 @@ Reconstruction of the 3 cameras:
 
 ### **You should explain:**
 
-- Extended parameter vector:  
-  **Op = [θ₂₁, t₂₁, θ₃₁, t₃₁, X₃D]**
-- Degrees of freedom:  
-  - **Camera 1 → fixed**  
-  - **Cameras 2 & 3 → rotation + translation**
-- Combined residuals for three-view projections  
-- Increase in parameter count and constraints  
-- Final scaling using **T₁₂** from ground truth  
+# **3-View Bundle Adjustment Pipeline (Summary)**
+
+## **1. Load Data**
+Load:
+- 2D point observations for cameras 1, 2, and 3  
+- Camera intrinsics \(K\)  
+- Fundamental matrix \(F_{21}\)  
+- Ground-truth poses and 3D points  
+
+---
+
+## **2. Initial Pose Estimation (Cameras 1 & 2)**
+- Compute essential matrix: \(E = K^\top F_{21} K\)  
+- Decompose \(E\) into candidate \((R, t)\) pairs  
+- Select the only valid solution (positive depth)  
+- Triangulate initial 3D points  
+
+**Output:**  
+- Initial pose \(T_{21}\)  
+- Initial 3D points \(X_1\)
+
+---
+
+## **3. Two-View Bundle Adjustment**
+Optimize:
+- Camera 2 pose  
+- All 3D points  
+
+Camera 1 is fixed.
+
+**Output:**  
+- Refined \(T_{21}\)  
+- Refined 3D points
+
+---
+
+## **4. PnP for Camera 3**
+Use refined 3D points + image points in camera 3 to compute initial pose:
+
+- Solve EPnP  
+- Convert rotation vector → rotation matrix  
+
+**Output:**  
+- Initial camera 3 pose \(T_{31}\)
+
+---
+
+## **5. Three-View Bundle Adjustment**
+Jointly optimize:
+- Camera 2 pose  
+- Camera 3 pose  
+- All 3D points  
+
+Camera 1 remains fixed.
+
+---
+
+## **6. Scale Fixing**
+Monocular reconstruction has arbitrary scale.  
+Fix scale by matching the estimated baseline \(\|t_{21}\|\) to the ground truth.
+
+**Output:**  
+- Scaled camera poses  
+- Scaled 3D points  
+- Scale factor
+
+---
+
+## **7. Evaluation vs Ground Truth**
+Compute:
+- Translation error  
+- Rotation error  
+for cameras 2 and 3.
+
+---
+
+## **8. Visualization**
+- Reprojections in all images  
+- 3D camera poses and trajectories  
+- 3D structure vs ground truth  
+
+This provides the final geometric reconstruction of the 3-view system.
+
 
 ---
 
@@ -521,34 +596,6 @@ Reconstruction of the 3 cameras:
 
 <img width="815" height="536" alt="image" src="https://github.com/user-attachments/assets/7fbbe76f-52dc-4344-b349-ad7f6a644d0a" />
 
-
-
-
----
-
-# **Appendix A — Rotation Representation in SO(3)**
-
-### **Helpful code:**
-
-```python
-def crossMatrix(x):
-    return np.array([
-        [0, -x[2], x[1]],
-        [x[2], 0, -x[0]],
-        [-x[1], x[0], 0]
-    ])
-```
-### **Explain:**
-
-- Vector **θ** and the skew-symmetric matrix **[θ]×**  
-- Exponential map:  
-  **R = exp([θ]×)**  
-- Logarithmic map:  
-  **θ = log(R)** using `scipy.linalg.logm`  
-- Numerical issues with **float32**  
-- Recommended use of **float64**  
-
----
 
 # **References**
 
