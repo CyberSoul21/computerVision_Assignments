@@ -14,7 +14,6 @@
   - [2.4 Comparison with Ground Truth](#24-comparison-with-ground-truth)
 - [3. Perspective-n-Point (PnP) for View 3](#3-perspective-n-point-pnp-for-view-3)
 - [4. Bundle Adjustment with Three Views](#4-bundle-adjustment-with-three-views)
-- [Appendix A — Rotation Representation in SO(3)](#appendix-a--rotation-representation-in-so3)
 - [References](#references)
 
 ---
