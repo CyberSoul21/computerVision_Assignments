@@ -258,4 +258,22 @@ def crossMatrix(x):
         [-x[1], x[0], 0]
     ])
 ```
+### **Explain:**
+
+- Vector **θ** and the skew-symmetric matrix **[θ]×**  
+- Exponential map:  
+  **R = exp([θ]×)**  
+- Logarithmic map:  
+  **θ = log(R)** using `scipy.linalg.logm`  
+- Numerical issues with **float32**  
+- Recommended use of **float64**  
+
+---
+
+# **References**
+
+- Official laboratory material  
+- *Multiple View Geometry in Computer Vision* — Hartley & Zisserman  
+- SciPy documentation — `least_squares`  
+- OpenCV documentation — `solvePnP`
 
