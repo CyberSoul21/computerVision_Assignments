@@ -619,13 +619,30 @@ u2_pred = projectKannalaBrandt(Xc2, K2, D2)
 Errors:
 
 ```
+Loaded 24 matches for pose A.
+First 5 3D points (WORLD frame, pose A):
+[[ 0.04598131  0.13149056 -0.09635658]
+ [ 0.04798854  0.12827626 -0.12502261]
+ [-0.20343993  0.56828053 -0.11635386]
+ [ 0.5992971   0.39077227 -0.05496876]
+ [ 0.60373871  0.76214826  0.25615624]]
+Saved 3D points to points3D_poseA.txt
+Loaded 24 3D points from points3D_poseA.txt
+
+=== Depth statistics (camera 1 frame) ===
+min Z: 0.1284366368088742  max Z: 0.7585598952911595
+
+=== Depth statistics (camera 2 frame) ===
+min Z: 0.127941307888498  max Z: 0.7552240937258081
+
+Points behind cam1 (Z<=0): 0
+Points behind cam2 (Z<=0): 0
+
 === Reprojection error cam1 (pixels) ===
-mean: ...
-max: ...
+mean: 0.4770049016631277   max: 1.9145541187292912
 
 === Reprojection error cam2 (pixels) ===
-mean: ...
-max: ...
+mean: 0.49225432746569986   max: 2.0133080984928204
 ```
 
 Reprojection error ≪ 1 px indicates **correct triangulation**.
