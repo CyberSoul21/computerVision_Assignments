@@ -138,18 +138,65 @@ def resBundleProjection(Op, x1Data, x2Data, K_c, nPoints):
     Residuals between predicted projections and measured 2D points.
     """
 ```
-This section should explain:
 
-- Parameter vector construction:  
-  **Op = [θ₂₁, t₂₁, X₁_points]**
-- Minimal rotation parameterization using **θ ∈ so(3)**
-- Exponential map to compute **R** from **θ**
-- Projection formula:  
-  **x̂ = K (R X + t)**
-- Residual per point:  
-  **r = x_measured – x̂**
+## **Step 3 — Bundle Adjustment (Two Views)**
 
-  ## **Step 3 — Bundle Adjustment (Two Views)**
+The residual function measures the mismatch between **predicted** image points (obtained by projecting 3D points using the current pose estimate) and the **observed** 2D image points.  
+Bundle Adjustment minimizes these residuals to refine camera pose and 3D structure.
+---
+
+### **Parameter Vector Construction**
+The optimization vector groups all variables BA must refine:
+
+$$
+O_p = [\theta_{21}, t_{21}, X_{1\_points}]
+$$
+
+
+
+Where:
+
+- **θ₂₁** → 3-parameter rotation representation (so(3))  
+- **t₂₁** → translation from camera 1 to camera 2  
+- **X₁_points** → all 3D points expressed in camera 1 coordinates  
+
+---
+
+### **Minimal Rotation Parameterization (θ ∈ so(3))**
+
+Rotation is encoded using only **3 parameters** instead of a 3×3 matrix.  
+This avoids redundancy and ensures the rotation stays valid during optimization.
+
+---
+
+### **Exponential Map (θ → R)**
+
+The 3-vector θ is converted into a valid rotation matrix using the exponential map:
+
+$$
+R = \exp([\theta]_{\times})
+$$
+
+---
+
+### **Projection Model**
+
+The predicted image coordinates for a 3D point are:
+
+$$
+\hat{x} = K ( R X + t )
+$$
+
+---
+
+### **Residual per Point**
+
+The residual measures the difference between observed and predicted image points:
+
+$$
+r = x_{\text{measured}} - \hat{x}
+$$
+
 
 ### **1. Compute ground-truth baseline length**
 - Invert GT poses to obtain camera-to-world transforms.  
