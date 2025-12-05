@@ -5,17 +5,17 @@
 ---
 
 ## **Table of Contents**
-   [General Description](#general-description)  
-   [Objectives of the Laboratory](#objectives-of-the-laboratory)  
-   [2. Multiview Geometry and Pose Estimation](#2-multiview-geometry-and-pose-estimation)  
-   - [2.1 Initial Reconstruction from Two Views](#21-initial-reconstruction-from-two-views)  
-   - [2.2 Residual Function](#22-residual-function)  
-   - [2.3 Bundle Adjustment (Two Views)](#23-bundle-adjustment-two-views)  
-   - [2.4 Comparison with Ground Truth](#24-comparison-with-ground-truth)  
-   [3. Perspective-n-Point (PnP) for View 3](#3-perspective-n-point-pnp-for-view-3)  
-   [4. Bundle Adjustment with Three Views](#4-bundle-adjustment-with-three-views)  
-   [Appendix A — Rotation Representation in SO(3)](#appendix-a--rotation-representation-in-so3)  
-   [References](#references)
+- [General Description](#general-description)
+- [Objectives of the Laboratory](#objectives-of-the-laboratory)
+- [2. Multiview Geometry and Pose Estimation](#2-multiview-geometry-and-pose-estimation)
+  - [2.1 Initial Reconstruction from Two Views](#21-initial-reconstruction-from-two-views)
+  - [2.2 Residual Function](#22-residual-function)
+  - [2.3 Bundle Adjustment (Two Views)](#23-bundle-adjustment-two-views)
+  - [2.4 Comparison with Ground Truth](#24-comparison-with-ground-truth)
+- [3. Perspective-n-Point (PnP) for View 3](#3-perspective-n-point-pnp-for-view-3)
+- [4. Bundle Adjustment with Three Views](#4-bundle-adjustment-with-three-views)
+- [Appendix A — Rotation Representation in SO(3)](#appendix-a--rotation-representation-in-so3)
+- [References](#references)
 
 ---
 
