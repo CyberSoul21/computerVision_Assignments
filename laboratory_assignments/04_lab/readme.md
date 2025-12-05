@@ -80,9 +80,9 @@ concepts are essential:
 A residual represents the discrepancy between an observed measurement and the
 prediction made by a model:
 
-\[
+&&
 r_i = y_i - \hat{y}_i
-\]
+&&
 
 Residuals quantify how well the model explains the data. In optimization-based
 methods, residuals are the quantities that the solver attempts to minimize.
@@ -93,9 +93,9 @@ methods, residuals are the quantities that the solver attempts to minimize.
 
 Least-squares aims to find the parameters that minimize the sum of squared residuals:
 
-\[
+&&
 \min \sum_i r_i^2 = r^\top r
-\]
+&&
 
 This formulation is widely used because:
 
@@ -126,9 +126,9 @@ A line in the image plane can be expressed minimally using two parameters:
 
 Through:
 
-\[
+&&
 y = m x + b
-\]
+&&
 
 Other representations such as \( ax + by + c = 0 \) exist, but they introduce an
 additional scale ambiguity and are therefore not minimal.
@@ -140,9 +140,9 @@ additional scale ambiguity and are therefore not minimal.
 A residual in this context represents the **vertical distance** between an observed
 2D point and the line predicted by the model:
 
-\[
+&&
 r_i = y_i - (m x_i + b)
-\]
+&&
 
 Minimizing these distances forces the fitted line to pass as close as possible to
 all measurements.
