@@ -662,8 +662,194 @@ Reprojection error ≪ 1 px indicates **correct triangulation**.
 ```
 ![Reprojection Error Plot](images/reprojection_error.png)
 ```
+---
+
+### Bundle Adjustment
+This module implements **Bundle Adjustment (BA)** for a **calibrated stereo rig with fisheye cameras**, using the Kannala-Brandt distortion model.
+
+Only the **3D points** are optimized (camera parameters remain fixed).  
+Residuals are defined as the **reprojection error** in both fisheye images.
+
+---
+
+# 1. `resBundleFisheyeStereo(Op, ...)` — Residual Function
+
+### **Purpose**  
+Computes the residual vector used by the optimizer.  
+For each 3D point, the residual is:
+
+$$
+\begin{bmatrix}
+u^{obs}_1 - u^{pred}_1 \\
+v^{obs}_1 - v^{pred}_1 \\
+u^{obs}_2 - u^{pred}_2 \\
+v^{obs}_2 - v^{pred}_2
+\end{bmatrix}
+$$
+
+Resulting in a vector of length:
+
+$$
+4N \quad \text{for } N \text{ points}
+$$
+
+---
+
+## 🔧 Pipeline
+
+### 1. Recover 3D points  
+Flattened vector `Op` → reshape to `3 × N`.
+
+### 2. Convert WORLD → CAMERA  
+Using extrinsic matrices:
+
+$$
+X_c = R_{cw} X_w + t_{cw}
+$$
+
+### 3. Project with Kannala-Brandt  
+
+```python
+u_pred, v_pred = projectKannalaBrandt(Xc1, K1, D1)
+```
+
+### 4. Compute residuals (obs − pred)
+
+Residual vector packing:
+
+```
+[ u1_err, v1_err, u2_err, v2_err ] for each point
+```
+
+---
+
+## Source Code
+
+```python
+def resBundleFisheyeStereo(Op, x1Data, x2Data, K1, D1, K2, D2, T_wc1, T_wc2):
+    ...
+```
+
+---
+
+# `bundleAdjustmentFisheyeStereo(...)`
+
+### **Purpose**  
+Runs Levenberg-Marquardt optimization to refine 3D points.
+
+---
+
+## 🔧 Pipeline
+
+### 1. Compute initial residuals
+
+$$
+\text{RMS}_{initial} = \sqrt{\frac{\sum r_i^2}{4N}}
+$$
+
+Used for reporting.
+
+### 2. Optimize using `scipy.optimize.least_squares`
+
+Algorithm: **LM (Levenberg-Marquardt)**  
+Variables: **only 3D points** (`3N` parameters)
+
+### 3. Compute final residuals
+
+$$
+\text{RMS}_{final} = \sqrt{\frac{2\,\text{cost}}{4N}}
+$$
+
+(consistent with lab's residual convention)
+
+### 4. Output optimized 3D points
+
+---
+
+## Outputs
+
+| Output | Description |
+|--------|-------------|
+| `Xw_opt` | Optimized 3D points (3×N) |
+| `res_initial` | Initial residual vector |
+| `res_final` | Final residual vector |
+
+---
+
+## Source Code
+
+```python
+def bundleAdjustmentFisheyeStereo(x1Data, x2Data,
+                                  K1, D1, K2, D2,
+                                  T_wc1, T_wc2,
+                                  Xw_init):
+    ...
+```
+
+---
+
+# 3. Main Program — Running BA
+
+The program performs:
+
+### Step 1 — Load 2D correspondences  
+`x1.txt`, `x2.txt` (3×N homogeneous).
+
+### Step 2 — Load triangulated 3D points  
+```
+points3D_poseA.txt
+```
+
+### Step 3 — Load calibration  
+- Intrinsics: `K_1.txt`, `K_2.txt`  
+- Distortion: `D1_k_array.txt`, `D2_k_array.txt`  
+- Extrinsics: `T_wc1.txt`, `T_wc2.txt`
+
+###  Step 4 — Run Bundle Adjustment  
+Refines the 3D structure while keeping cameras fixed.
+
+###  Step 5 — Save optimized points  
+```
+points3D_poseA_BA.txt
+```
+
+---
 
 
+# BA Output Metrics
+
+Typical printed results:
+
+```
+=== Fisheye Stereo BA - INITIAL STATE ===
+Initial cost: 19.252861
+RMS reprojection error: 0.447829 pixels
+
+`ftol` termination condition is satisfied.
+Function evaluations 293, initial cost 9.6264e+00, final cost 8.5557e+00, first-order optimality 4.45e-03.
+
+=== Fisheye Stereo BA - RESULT ===
+Final cost: 8.555714
+RMS reprojection error: 0.422190 pixels
+Success: True
+Iterations: 293
+```
+
+#  Image Placeholder Sections
+
+```
+![BA Pipeline](images/ba_pipeline.png)
+```
+
+```
+![Residual Evolution](images/residuals.png)
+```
+
+```
+![3D Structure Before/After BA](images/ba_structure.png)
+```
+
+---
 
 #  References  
 
