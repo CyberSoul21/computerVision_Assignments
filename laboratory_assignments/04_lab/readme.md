@@ -40,102 +40,41 @@ In this laboratory session we implement a complete multiview reconstruction pipe
 
 ## **2.1 Initial Reconstruction from Two Views**
 
-## **Overview — Initial Two-View Geometry**
-
-### **Essential Matrix**
-- Converts the Fundamental matrix into calibrated geometry:
-
-$$
-E = K^{T} F K
-$$
-
-- Encodes only the relative rotation and translation.
-
----
-
-### **Essential Matrix Constraints**
-- The essential matrix must have **two identical singular values** and the **third equal to zero**.
-
-(SVD enforcement)
-
-$$
-\Sigma = \text{diag}(1,\,1,\,0)
-$$
-
----
-
-### **Recovering \(R\) and \(t\)**
-- Using SVD decomposition \(E = U \Sigma V^{T}\), motion is extracted:
-
-Rotation candidates:
-
-$$
-R = U\,W\,V^{T}
-$$
-
-where  
-
-$$
-W = 
-\begin{bmatrix}
-0 & -1 & 0 \\
-1 & 0 & 0 \\
-0 & 0 & 1
-\end{bmatrix}
-$$
-
-Translation direction:
-
-$$
-t = U[:, 2]
-$$
-
----
-
-### **Four-Solution Ambiguity**
-- The decomposition yields four possible motion pairs:
-
-$$
-(R_1,\, t),\quad (R_1,\,-t),\quad (R_2,\, t),\quad (R_2,\,-t)
-$$
-
----
-
-### **Cheirality Check**
-- The physically correct pose is the one where triangulated points satisfy:
-
-$$
-Z_1 > 0
-$$
-
-and
-
-$$
-Z_2 > 0
-$$
-
-(Points must lie **in front of both cameras**.)
-
----
-
-### **Initial Linear Triangulation**
-- 3D points are estimated by solving the linear camera projection equations:
-
-$$
-x = P X
-$$
-
-Result: a first approximation of the scene structure before applying BA.
-
-
 Pipeline steps:
 
-1. Load **F**  
-2. Convert to **E**  
-3. Extract candidate (**R**, **t**) pairs  
-4. Select the valid configuration  
-5. Triangulate 3D points in camera 1 reference
 ## **Before Bundle Adjustment: Initial Pose & 3D Reconstruction**
+
+### **1. Load F (Fundamental Matrix)**
+- The **Fundamental Matrix** encodes the epipolar geometry **between two uncalibrated images**.  
+- It relates corresponding pixels in image 1 and image 2 through the epipolar constraint.  
+- It tells us how points in one image restrict the position of their match in the other.
+
+---
+
+### **2. Convert to E (Essential Matrix)**
+- The **Essential Matrix** is the calibrated version of the fundamental matrix.  
+- It incorporates the camera intrinsic parameters and describes **only the relative pose (R, t)** between two cameras.  
+- Once converted, the geometry depends only on 3D motion, not on pixel coordinates.
+
+---
+
+### **3. Extract Candidate (R, t) Pairs**
+- The essential matrix can be decomposed into **four possible motion solutions**: two possible rotations and two possible translation directions.  
+- These represent all mathematically valid relative camera poses consistent with the epipolar geometry.
+
+---
+
+### **4. Select the Valid Configuration (Cheirality Check)**
+- Only **one** of the four candidates places the triangulated 3D points **in front of both cameras**.  
+- This physical feasibility test (cheirality) determines the correct rotation and translation.
+
+---
+
+### **5. Triangulate 3D Points (Initial Reconstruction)**
+- With a valid camera pose, corresponding pixels are back-projected into 3D.  
+- Intersecting their rays from each camera yields **initial 3D scene points** in the reference frame of camera 1.  
+- This gives a coarse but consistent 3D structure — the starting point for Bundle Adjustment.
+
 
 ### **Step 1 — Initial Pose from the Essential Matrix**
 
