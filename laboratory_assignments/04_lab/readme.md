@@ -111,6 +111,8 @@ $$
 ---
 
 ### **Step 2 — Initial Residual Visualization**
+Bundle Adjustment solves for the camera pose and 3D structure that best explain the observed 2D points.  
+It does this by minimizing the reprojection error of all points in all images:
 
 1. **Project initial 3D points** onto both cameras:
    
