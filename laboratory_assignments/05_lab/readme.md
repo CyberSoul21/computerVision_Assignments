@@ -1,222 +1,345 @@
-# **Laboratory Session 5 — Omnidirectional Vision**  
-*(Computer Vision — UNIZAR)*  
-:contentReference[oaicite:0]{index=0}
+#  Laboratory 5 — Kannala-Brandt Fisheye Model  
+**MRGCV Unizar — Computer Vision**  
+**Authors:** Wilson Javier Almario (962449), Diego Méndez (960616)
 
 ---
 
-# **Table of Contents**
+##  Overview  
 
-1. [General Description](#general-description)  
-2. [Goals of the Assignment](#goals-of-the-assignment)  
-3. [Provided Data](#provided-data)  
-4. [1. Kannala–Brandt Projection & Unprojection Model](#1-kannala–brandt-projection--unprojection-model)  
-   - [1.1 Theory Summary](#11-theory-summary)  
-   - [1.2 Implementation Requirements](#12-implementation-requirements)  
-   - [1.3 Validation Using Virtual Points](#13-validation-using-virtual-points)  
-5. [2. Stereo Triangulation Using Fisheye Rays](#2-stereo-triangulation-using-fisheye-rays)  
-   - [2.1 Unprojection to Rays](#21-unprojection-to-rays)  
-   - [2.2 Plane-Based Triangulation](#22-plane-based-triangulation)  
-   - [2.3 Results for Pose A](#23-results-for-pose-a)  
-6. [3. Bundle Adjustment with Fisheye Stereo (Optional)](#3-bundle-adjustment-with-fisheye-stereo-optional)  
-   - [3.1 Optimization Parameters](#31-optimization-parameters)  
-   - [3.2 Residual Definition](#32-residual-definition)  
-   - [3.3 Final Reconstruction](#33-final-reconstruction)  
-7. [Appendix A — Rotation Representation in SO(3)](#appendix-a--rotation-representation-in-so3)  
-8. [References](#references)
+This module implements the **projection** and **unprojection** for fisheye lenses using the  
+**Kannala-Brandt distortion model**, enabling accurate omnidirectional geometry.
+
+Functions included:
+
+- `projectKannalaBrandt`
+- `_newton_solve_theta`
+- `unprojectKannalaBrandt`
+- `testingKannalaBrandt`
 
 ---
 
-# **General Description**
+#  1. `projectKannalaBrandt(Pc, K, D)`
 
-In this laboratory session, you will implement a **non-linear omnidirectional projection model** capable of handling any radially symmetric fisheye camera.  
-Specifically, you will work with the **Kannala–Brandt model**, used for reconstruction in stereo fisheye systems through:
-
-- Unprojection into rays  
-- Linear triangulation using plane intersections  
-- Optional bundle adjustment  
-
-Source: Laboratory Session 5 PDF :contentReference[oaicite:1]{index=1}
+### **Purpose**  
+Projects 3D points in the camera reference frame into distorted fisheye pixel coordinates.
 
 ---
 
-# **Goals of the Assignment**
+## 🔧 Pipeline  
 
-1. Understand the non-linear **Kannala–Brandt projection/unprojection** model  
-2. Triangulate 3D points from fisheye stereo using **ray-plane geometry**  
-3. Adapt classical stereo algorithms to work with calibrated non-linear models  
+### 1. Normalized coordinates  
+
+  
+$$
+a = \frac{X}{Z}, \qquad b = \frac{Y}{Z}
+$$
+  
+
+  
+$$
+r = \sqrt{a^2 + b^2}
+$$
+  
+
+
+### 2. Fisheye angle  
+
+  
+$$
+\theta = \arctan(r)
+$$
+  
+
+
+### 3. Apply Kannala-Brandt distortion  
+
+  
+$$
+\theta_d = \theta\left(1 + k_1\theta^2 + k_2\theta^4 + k_3\theta^6 + k_4\theta^8\right)
+$$
+  
+
+
+### 4. Distorted normalized coordinates  
+
+  
+$$
+x' = \frac{\theta_d}{r} a,  
+\qquad  
+y' = \frac{\theta_d}{r} b
+$$
+  
+
+
+### 5. Pixel coordinates  
+
+  
+$$
+u = f_x x' + c_x, \qquad v = f_y y' + c_y
+$$
+  
+
 
 ---
 
-# **Provided Data**
+## Inputs  
 
-The lab includes the following files:
-
-### **Camera intrinsics**
-- `K_1.txt`, `K_2.txt` — intrinsic matrices  
-- `D1_k_array.txt`, `D2_k_array.txt` — distortion parameters  
-  - Polynomial:  
-    θ_d = θ + k₁ θ³ + k₂ θ⁵ + k₃ θ⁷ + k₄ θ⁹  
-
-### **Camera extrinsics**
-- `T_wc1.txt` — pose of left camera wrt world  
-- `T_wc2.txt` — pose of right camera wrt world  
-
-### **Pose transformation between A and B**
-- Ground truth: `T_wAwB_gt.txt`  
-- Initial seed for BA: `T_wAwB_seed.txt`  
-
-### **Point correspondences**
-Pose A: `x1.txt`, `x2.txt`  
-Pose B: `x3.txt`, `x4.txt`  
+| Parameter | Shape | Description |
+|----------|--------|-------------|
+| `Pc` | `(3,)` or `(N,3)` | 3D points in camera frame |
+| `K` | `(3,3)` | Intrinsic matrix |
+| `D` | `(4,)` | Distortion coefficients |
 
 ---
 
-# **1. Kannala–Brandt Projection & Unprojection Model**
+## Output  
 
-## **1.1 Theory Summary**
-
-This section should describe:
-
-- Mapping from **ray direction → pixel**  
-- Non-linear distortion through odd polynomial terms  
-- Relationship between the angle θ and distorted angle θ_d  
-- Why linear pinhole projection fails in fisheye optics  
+| Output | Shape | Description |
+|--------|--------|-------------|
+| `uv` | `(2,)` or `(N,2)` | Pixel coordinates |
 
 ---
 
-## **1.2 Implementation Requirements**
+## Image Placeholder  
 
-You must implement:
-
-### **Projection (3D → pixel)**
-
-Compute the distorted radius:
-
-```markdown
-θ_d = θ + k₁ θ³ + k₂ θ⁵ + k₃ θ⁷ + k₄ θ⁹
+```
+![Projection](images/projection.png)
 ```
 
-Then map to pixel coordinates using **K**.
 
 ---
 
-# **Unprojection (pixel → normalized 3D ray)**
-
-Given pixel coordinates **(u, v)**:
-
-1. Convert pixel coordinates to the normalized plane  
-2. Solve for **θ** using numerical inversion of the KB polynomial  
-3. Convert **(θ, φ)** back into a unit 3D ray  
-
----
-
-## **1.3 Validation Using Virtual Points**
-
-Use the virtual test points provided in the PDF to verify:
-
-unproject(project(X)) ≈ X / ||X||
-
-Insert figure placeholder:
-
-![KBModelValidation](figs/kb_validation.png)
-
----
-
-# **2. Stereo Triangulation Using Fisheye Rays**
-
-## **2.1 Unprojection to Rays**
-
-For each pixel correspondence in **x1.txt**, **x2.txt**:
-
-- Apply **Kannala–Brandt unprojection**  
-- Express rays in world coordinates:
+## Source Code  
 
 ```python
-ray_world = R_wc @ ray_cam + t_wc  
+def projectKannalaBrandt(Pc, K, D):
+    ...
 ```
-## **2.2 Plane-Based Triangulation**
-
-Because the stereo rig is fully calibrated:
-
-- Compute the **epipolar plane** defined by the two rays  
-- Intersect both ray-defined planes to estimate the 3D point  
-
-This is equivalent to computing the **closest point between two rays** expressed in the world frame.
 
 ---
 
-## **2.3 Results for Pose A**
+#  2. `_newton_solve_theta(rd, k1, k2, k3, k4)`
 
-Insert placeholder for 3D point cloud:
-
-![TriangulatedPointsA](figs/triangulation_poseA.png)
-
----
-
-# **3. Bundle Adjustment with Fisheye Stereo (Optional)**
-
-## **3.1 Optimization Parameters**
-
-Optimize over:
-
-- Pose transformation **T_wAwB**  
-- 3D coordinates of all reconstructed points  
-
-Treat as known parameters:
-
-- **K₁**, **K₂**  
-- Distortion parameters **D₁**, **D₂**  
-- Stereo extrinsics **T_wc1**, **T_wc2**  
+### **Purpose**  
+Solves the inverse distortion problem using Newton–Raphson.
 
 ---
 
-## **3.2 Residual Definition**
+## 🔧 Pipeline  
 
-Residual = reprojection error under the **Kannala–Brandt model**:
+Equation to solve:
 
+  
+$$
+rd = \theta(1 + k_1\theta^2 + k_2\theta^4 + k_3\theta^6 + k_4\theta^8)
+$$
+  
 
-## **3.2 Residual Definition**
+Newton update:
 
-Residual = reprojection error under the **Kannala–Brandt model**:
+  
+$$
+\theta_{t+1} = \theta_t - \frac{f(\theta_t)}{f'(\theta_t)}
+$$
+  
 
-**Insert Python code here:**  
-(residual = x_measured – project_KB(X_world, camera_pose, K, D))
-
----
-
-## **3.3 Final Reconstruction**
-
-Insert BA result placeholder here:
-
-![BAReconstruction](figs/ba_reconstruction.png)
-
----
-
-# **Appendix A — Rotation Representation in SO(3)**
-
-Useful for parameterizing **T_wAwB** in bundle adjustment.
-
-### **Skew-symmetric operator**
-
-**Insert Python code here:**  
-(definition of crossMatrix(x))
-
-### **Concepts to explain**
-
-- Vector **θ** and the skew-symmetric matrix **[θ]×**  
-- Exponential map:  
-  **R = exp([θ]×)**  
-- Logarithmic map:  
-  **θ = log(R)** via `scipy.linalg.logm`  
-- Why **float64** is required for numerical stability in BA  
 
 ---
 
-# **References**
+##  Inputs  
 
-- Laboratory Session 5 PDF  
-- *Multiple View Geometry in Computer Vision* — Hartley & Zisserman  
-- SciPy documentation — `least_squares`  
-- Kannala & Brandt (2006) — *A Generic Camera Model for Fisheye Lenses*
+| Parameter | Description |
+|----------|-------------|
+| `rd` | Distorted radius |
+| `k1..k4` | KB distortion coefficients |
+| `max_iter` | Max iterations |
+| `eps` | Convergence tolerance |
 
+---
+
+##  Output  
+
+| Output | Description |
+|--------|-------------|
+| `theta` | Undistorted polar angle |
+
+---
+
+## Source Code  
+
+```python
+def _newton_solve_theta(rd, k1, k2, k3, k4, max_iter=10, eps=1e-9):
+    ...
+```
+
+---
+
+# 3. `unprojectKannalaBrandt(uv, K, D, ...)`
+
+### **Purpose**  
+Converts pixel coordinates into 3D camera-frame rays.
+
+---
+
+## 🔧 Pipeline  
+
+### 1. Distorted normalized coords  
+
+  
+$$
+x_d = \frac{u - c_x}{f_x},  
+\qquad  
+y_d = \frac{v - c_y}{f_y}
+$$
+  
+
+  
+$$
+rd = \sqrt{x_d^2 + y_d^2}
+$$
+  
+
+
+### 2. Recover undistorted angle  
+
+  
+$$
+\theta = \text{NewtonSolve}(rd)
+$$
+  
+
+
+### 3. Undistorted radius  
+
+  
+$$
+r = \tan(\theta)
+$$
+  
+
+
+### 4. Ray construction  
+
+  
+$$
+a = x_d \frac{r}{rd},  
+\qquad  
+b = y_d \frac{r}{rd}
+$$
+  
+
+  
+$$
+\text{ray} = (a, b, 1)
+$$
+  
+
+
+### 5. Optional normalization  
+
+  
+$$
+\hat{v} = \frac{v}{\|v\|}
+$$
+  
+
+
+---
+
+##  Inputs  
+
+| Parameter | Shape | Description |
+|----------|--------|-------------|
+| `uv` | `(2,)` or `(N,2)` | Pixel coordinates |
+| `K` | `(3,3)` | Camera intrinsics |
+| `D` | `(4,)` | KB coefficients |
+| `normalize` | bool | Normalize rays |
+
+---
+
+## 🎯 Output  
+
+| Output | Shape | Description |
+|--------|--------|-------------|
+| `rays` | `(3,)` or `(N,3)` | 3D direction vectors |
+
+---
+
+##  Image Placeholder  
+
+```
+![Unprojection](images/unprojection.png)
+```
+
+---
+
+## Source Code  
+
+```python
+def unprojectKannalaBrandt(uv, K, D, max_iter=10, eps=1e-9, normalize=True):
+    ...
+```
+
+---
+
+#  4. `testingKannalaBrandt()`
+
+### **Purpose**  
+Runs a full validation pipeline with:
+
+- Projection test  
+- Unprojection test  
+- Angular error computation  
+
+---
+
+## 🔧 Pipeline  
+
+### 1. Load calibration (K, D)  
+
+### 2. Load virtual 3D points  
+
+### 3. Load ground-truth pixel projections  
+
+### 4. Projection error  
+
+  
+$$
+e_i = \| u_i^{pred} - u_i^{gt} \|
+$$
+  
+
+
+### 5. Unprojection angular error  
+
+  
+$$
+\alpha = \arccos(\langle \hat{X}, \hat{r} \rangle)
+$$
+  
+
+
+---
+
+## Source Code  
+
+```python
+def testingKannalaBrandt():
+    ...
+```
+
+---
+
+## 🖼️ Image Placeholder  
+
+```
+![Testing](images/testing.png)
+```
+
+---
+
+#  References  
+
+Kannala, J., & Brandt, S. (2006).  
+_A generic camera model and calibration method for conventional, wide-angle, and fish-eye lenses._
 
