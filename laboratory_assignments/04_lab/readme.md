@@ -310,7 +310,8 @@ This prediction is what produces the residuals that BA tries to minimize.
 - Numerical error analysis  
 
 **Example figure:**  
-<img width="846" height="794" alt="image" src="https://github.com/user-attachments/assets/2ee8e4c9-5a54-4c98-b134-f10bbe45aa9c" />
+<img width="786" height="761" alt="image" src="https://github.com/user-attachments/assets/f6d5bff6-be88-4ffb-b19d-e1de10f3b03b" />
+
 
 
 ---
@@ -565,6 +566,114 @@ Compute:
 - Translation error  
 - Rotation error  
 for cameras 2 and 3.
+
+```
+================================================================================
+                                  SCALE FIXING                                  
+================================================================================
+
+Using baseline between Camera 1 and Camera 2:
+  Ground truth ||t_21||:  1.224017
+  Estimated ||t_21||:     1.813714
+  Scale factor:           0.674867
+
+✓ Scale applied to 2 cameras and 103 points
+
+
+================================================================================
+VISUALIZATION
+================================================================================
+
+Generating reprojection visualizations...
+* Saved: final_reprojections_3views.png
+
+================================================================================
+VISUALIZATION
+================================================================================
+
+Generating 3D visualization...
+* Saved: 04_final_3d_3views.png
+
+================================================================================
+                              FINAL RESULTS
+================================================================================
+
+2-View Bundle Adjustment:
+  Initial RMS error:       2.192129 pixels
+  Final RMS error:         0.242673 pixels
+  Improvement:             99.39%
+
+3-View Bundle Adjustment:
+  Initial RMS error:       0.912313 pixels
+  Final RMS error:         0.535259 pixels
+  Improvement:             82.79%
+
+Scale Correction:
+  Scale factor applied:    0.674867
+
+
+
+================================================================================
+                          BUNDLE ADJUSTMENT - 3 VIEWS                           
+================================================================================
+
+Configuration:
+  Number of cameras:      3
+  Number of points:       103
+  Fixed cameras:          1 (Camera 1 at origin)
+  Optimized cameras:      2
+
+Preparing optimization parameters...
+--------------------------------------------------------------------------------
+Parameter breakdown:
+  Camera parameters:      12 (2 cameras × 6 DOF)
+  Point parameters:       309 (103 points × 3 coords)
+  Total parameters:       321
+
+Residuals:
+  Per point per camera:   2 (x, y)
+  Total residuals:        618 (3 cameras × 103 points × 2)
+
+Initial state:
+  Total cost:             514.3709
+  RMS reprojection error: 0.9123 pixels
+
+Running bundle adjustment optimization...
+This may take 10-60 seconds depending on number of cameras and points...
+--------------------------------------------------------------------------------
+ftol termination condition is satisfied.
+Function evaluations 17, initial cost 2.5719e+02, final cost 8.8529e+01, first-order optimality 1.27e-02.
+
+================================================================================
+OPTIMIZATION COMPLETE!
+================================================================================
+Final cost:             88.529049
+RMS reprojection error: 0.535259 pixels
+Success:                True
+Iterations:             17
+Termination reason:     ftol termination condition is satisfied.
+
+Cost improvement:       514.3709 → 88.529049 (82.79%)
+RMS improvement:        0.9123 → 0.535259 pixels
+
+
+Camera 1:
+  Translation error: 0.000000 units
+  Rotation error:    0.000000 (Frobenius norm)
+  Rotation error:    0.000000 degrees
+
+Camera 2:
+  Translation error: 0.013018 units
+  Rotation error:    0.019996 (Frobenius norm)
+  Rotation error:    0.810109 degrees
+
+Camera 3:
+  Translation error: 0.123871 units
+  Rotation error:    0.028673 (Frobenius norm)
+  Rotation error:    1.161692 degrees
+
+
+```
 
 ---
 
