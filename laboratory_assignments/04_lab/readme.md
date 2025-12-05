@@ -243,23 +243,42 @@ $$
 \left\| x_{2,i} - \hat{x}_{2,i} \right\|^2
 $$
 
+**Meaning:**  
+For each correspondence \(i\), we compare the true image points \(x_{1,i}, x_{2,i}\) with the predicted ones \(\hat{x}_{1,i}, \hat{x}_{2,i}\).  
+If the prediction is perfect → error is zero.  
+BA adjusts **R**, **t**, and the **3D points X** to make these errors as small as possible.
+
 ---
 
 ### **Projection model**
+This is how we predict where a 3D point should appear in the image:
 
 $$
 \hat{x} = K(RX + t)
 $$
 
+**Meaning:**  
+- First we transform the 3D point from camera 1's frame into camera 2 using \( R X + t \).  
+- Then we project it through the camera intrinsics \(K\).  
+- The result is the pixel location where that point *should* be if the geometry were perfect.
+
+This prediction is what produces the residuals that BA tries to minimize.
+
 ---
 
 ### **Outputs of the BA step**
-- `T_21_opt` → optimized camera pose  
-- `X1_opt` → optimized 3D points  
-- `res_init` → residuals before BA  
-- `res_final` → residuals after BA  
 
----
+- **\(T_{21,\text{opt}}\)** → optimized relative pose  
+  - Final estimate of rotation & translation between camera 1 and camera 2.
+
+- **\(X_{1,\text{opt}}\)** → optimized 3D structure  
+  - Improved 3D points after optimization, usually much more consistent with the images.
+
+- **res\_init** → residuals before BA  
+  - Tells you how inaccurate the initial triangulation was.
+
+- **res\_final** → residuals after BA  
+  - Should be significantly smaller; indicates the improvement made by BA.
 
 
 ---
