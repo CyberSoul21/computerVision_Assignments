@@ -95,9 +95,9 @@ methods, residuals are the quantities that the solver attempts to minimize.
 
 Least-squares aims to find the parameters that minimize the sum of squared residuals:
 
-&&
+$$
 \min \sum_i r_i^2 = r^\top r
-&&
+$$
 
 This formulation is widely used because:
 
