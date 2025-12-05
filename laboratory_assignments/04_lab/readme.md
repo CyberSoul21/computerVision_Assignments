@@ -98,4 +98,49 @@ OpOptim = scOptim.least_squares(
     args=(xData,),
     method='lm'
 )
+```
+## **1.3 Results and Visualizations**
+
+Example figure:
+
+![LineFit](figs/line_fit.png)
+
+---
+
+# **2. Multiview Geometry and Pose Estimation**
+
+## **2.1 Initial Reconstruction from Two Views**
+
+You should document:
+
+- How to compute the essential matrix:  
+  **E = Kᵀ F K**
+- Constraints of the essential matrix (two equal singular values)  
+- Recovery of **R** and **t** through SVD decomposition  
+- Four-solution ambiguity  
+- Correct solution selection using **cheirality**  
+- Initial linear triangulation of points  
+
+Pipeline steps:
+
+1. Load **F**  
+2. Convert to **E**  
+3. Extract candidate (**R**, **t**) pairs  
+4. Select the valid configuration  
+5. Triangulate 3D points in camera 1 reference  
+
+---
+
+## **2.2 Residual Function**
+
+Template:
+
+```python
+def resBundleProjection(Op, x1Data, x2Data, K_c, nPoints):
+    """
+    Residuals between predicted projections and measured 2D points.
+    """
+```
+
+
 
