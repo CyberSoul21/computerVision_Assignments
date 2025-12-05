@@ -5,22 +5,22 @@
 ---
 
 ## **Table of Contents**
-1. [General Description](#general-description)  
-2. [Objectives of the Laboratory](#objectives-of-the-laboratory)  
-3. [Prerequisites and Provided Material](#prerequisites-and-provided-material)  
-4. [1. Line Fitting with Least Squares](#1-line-fitting-with-least-squares)  
+   [General Description](#general-description)  
+   [Objectives of the Laboratory](#objectives-of-the-laboratory)  
+   [Prerequisites and Provided Material](#prerequisites-and-provided-material)  
+   [1. Line Fitting with Least Squares](#1-line-fitting-with-least-squares)  
    - [1.1 Theoretical Concepts](#11-theoretical-concepts)  
    - [1.2 Implementation](#12-implementation)  
    - [1.3 Results and Visualizations](#13-results-and-visualizations)  
-5. [2. Multiview Geometry and Pose Estimation](#2-multiview-geometry-and-pose-estimation)  
+   [2. Multiview Geometry and Pose Estimation](#2-multiview-geometry-and-pose-estimation)  
    - [2.1 Initial Reconstruction from Two Views](#21-initial-reconstruction-from-two-views)  
    - [2.2 Residual Function](#22-residual-function)  
    - [2.3 Bundle Adjustment (Two Views)](#23-bundle-adjustment-two-views)  
    - [2.4 Comparison with Ground Truth](#24-comparison-with-ground-truth)  
-6. [3. Perspective-n-Point (PnP) for View 3](#3-perspective-n-point-pnp-for-view-3)  
-7. [4. Bundle Adjustment with Three Views](#4-bundle-adjustment-with-three-views)  
-8. [Appendix A — Rotation Representation in SO(3)](#appendix-a--rotation-representation-in-so3)  
-9. [References](#references)
+    [3. Perspective-n-Point (PnP) for View 3](#3-perspective-n-point-pnp-for-view-3)  
+   [4. Bundle Adjustment with Three Views](#4-bundle-adjustment-with-three-views)  
+   [Appendix A — Rotation Representation in SO(3)](#appendix-a--rotation-representation-in-so3)  
+   [References](#references)
 
 ---
 
