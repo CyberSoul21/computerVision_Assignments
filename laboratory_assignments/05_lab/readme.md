@@ -358,6 +358,15 @@ Point 3: 0.00000468 degrees
 This module implements projection and unprojection for fisheye cameras.
 ```
 ----
+Camera 1
+<img width="1029" height="918" alt="image" src="https://github.com/user-attachments/assets/5198d44f-b46e-4a0b-b2a4-4abcd7d609c4" />
+
+Camera 2
+
+<img width="992" height="803" alt="image" src="https://github.com/user-attachments/assets/6787bd5d-e427-4c37-9204-8a9060b1ad86" />
+
+
+
 
 
 ##  Overview
@@ -651,18 +660,8 @@ Reprojection error ≪ 1 px indicates **correct triangulation**.
 
 #  Image Placeholder Sections
 
-```
-![Triangulation Diagram](images/triangulation.png)
-```
+<img width="599" height="564" alt="image" src="https://github.com/user-attachments/assets/6cb3d483-9b6c-4e14-80be-0cccb0eac6ca" />
 
-```
-![Ray Geometry](images/rays.png)
-```
-
-```
-![Reprojection Error Plot](images/reprojection_error.png)
-```
----
 
 ### Bundle Adjustment
 This module implements **Bundle Adjustment (BA)** for a **calibrated stereo rig with fisheye cameras**, using the Kannala-Brandt distortion model.
