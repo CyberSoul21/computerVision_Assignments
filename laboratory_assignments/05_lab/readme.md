@@ -359,6 +359,295 @@ This module implements projection and unprojection for fisheye cameras.
 ```
 ----
 
+
+##  Overview
+
+This module implements **3D triangulation** using a **calibrated stereo rig with fisheye cameras**, using the **Kannala-Brandt projection/unprojection model**.
+
+Pipeline summary:
+
+1. **Unproject fisheye pixels → 3D rays** (KB model).  
+2. **Transform rays to WORLD frame** using extrinsics.  
+3. **Triangulate 3D points** by computing the closest point between two rays.  
+4. **Validate depth** in each camera.  
+5. **Reproject 3D points** back onto fisheye images and measure reprojection error.
+
+---
+
+#  1. `triangulate_two_rays(C1, d1, C2, d2)`
+
+### **Purpose**  
+Computes the 3D point that best satisfies two rays in WORLD coordinates:
+
+$$
+X = C_1 + \lambda_1 d_1
+$$
+
+$$
+X = C_2 + \lambda_2 d_2
+$$
+
+The function finds the **closest points between both lines** and returns their midpoint.
+
+---
+
+##  Pipeline
+
+### 1. Normalize direction vectors  
+Ensures numerical stability.
+
+### 2. Compute coefficients  
+
+Let  
+
+$$
+w_0 = C_1 - C_2
+$$
+
+Then  
+
+$$
+a = d_1 \cdot d_1, \quad b = d_1 \cdot d_2, \quad c = d_2 \cdot d_2
+$$
+
+$$
+d = d_1 \cdot w_0, \quad e = d_2 \cdot w_0
+$$
+
+### 3. Solve for λ₁ and λ₂  
+
+Denominator:
+
+$$
+\text{denom} = ac - b^2
+$$
+
+If denom ≈ 0 → rays are nearly parallel.
+
+Otherwise:
+
+$$
+\lambda_1 = \frac{b e - c d}{\text{denom}}
+$$
+
+$$
+\lambda_2 = \frac{a e - b d}{\text{denom}}
+$$
+
+### 4. Compute closest points on each ray  
+
+$$
+P_1 = C_1 + \lambda_1 d_1
+$$
+
+$$
+P_2 = C_2 + \lambda_2 d_2
+$$
+
+### 5. Output midpoint  
+
+$$
+X = \frac{P_1 + P_2}{2}
+$$
+
+---
+
+##  Inputs
+
+| Param | Shape | Description |
+|-------|--------|-------------|
+| `C1`, `C2` | `(3,)` | Camera centers in WORLD frame |
+| `d1`, `d2` | `(3,)` | Ray directions |
+| `eps` | float | Parallelism threshold |
+
+---
+
+## Outputs
+
+| Output | Shape | Description |
+|--------|--------|-------------|
+| `X` | `(3,)` | Triangulated point |
+| `P1`, `P2` | `(3,)` | Closest points on rays |
+
+---
+
+##  Source Code
+
+```python
+def triangulate_two_rays(C1, d1, C2, d2, eps=1e-9):
+    ...
+```
+
+---
+
+# 2. `triangulate_poseA_kb(...)`
+
+### **Purpose**  
+Triangulate all matched pixel points for **pose A** using a **fisheye stereo pair**.
+
+---
+
+##  Pipeline
+
+### 1. Unproject fisheye pixels into rays  
+Using the KB model:
+
+```python
+rays1_cam = unprojectKannalaBrandt(x1, K1, D1)
+rays2_cam = unprojectKannalaBrandt(x2, K2, D2)
+```
+
+This yields **rays in camera frames**.
+
+---
+
+### 2. Convert rays into WORLD coordinates  
+
+Using the extrinsic matrices:
+
+$$
+X_w = R_{wc} X_c + t_{wc}
+$$
+
+---
+
+### 3. Triangulate each pair of rays  
+
+For each match:
+
+$$
+X_i = \text{Triangulate}(C_1, d_{1i}, C_2, d_{2i})
+$$
+
+---
+
+### 4. Output all triangulated points  
+
+Array of shape `(N,3)`.
+
+---
+
+##  Source Code
+
+```python
+def triangulate_poseA_kb(
+    x1, x2,
+    K1, D1, K2, D2,
+    T_wc1, T_wc2,
+    normalize_rays=True
+):
+    ...
+```
+
+---
+
+#  3. Main Program — Triangulation + Validation
+
+The `main()` function performs:
+
+---
+
+##  Step 1 — Load pixel correspondences  
+From `x1.txt` and `x2.txt`.
+
+---
+
+##  Step 2 — Load intrinsics + distortion  
+`K_1.txt`, `K_2.txt`, `D1_k_array.txt`, `D2_k_array.txt`.
+
+---
+
+##  Step 3 — Load stereo extrinsics  
+`T_wc1.txt`, `T_wc2.txt`.
+
+---
+
+##  Step 4 — Triangulate  
+Produces the world-frame 3D points:
+
+```
+First 5 3D points (WORLD frame, pose A):
+[ ... ]
+```
+
+---
+
+##  Step 5 — Save points  
+```
+points3D_poseA.txt
+```
+
+---
+
+#  4. Post-Processing: Depth Check + Reprojection
+
+After triangulation, code validates correctness:
+
+---
+
+##  Transform triangulated points into each camera frame  
+
+$$
+X_c = R_{cw} X_w + t_{cw}
+$$
+
+---
+
+##  Depth statistics  
+
+Ensures `Z > 0` (points should lie in front of the cameras).
+
+Example log:
+
+```
+=== Depth statistics (camera 1 frame) ===
+min Z: ...
+max Z: ...
+```
+
+---
+
+#  Reprojection Error (Using KB Model)
+
+The triangulated 3D points are projected back:
+
+```python
+u1_pred = projectKannalaBrandt(Xc1, K1, D1)
+u2_pred = projectKannalaBrandt(Xc2, K2, D2)
+```
+
+Errors:
+
+```
+=== Reprojection error cam1 (pixels) ===
+mean: ...
+max: ...
+
+=== Reprojection error cam2 (pixels) ===
+mean: ...
+max: ...
+```
+
+Reprojection error ≪ 1 px indicates **correct triangulation**.
+
+---
+
+#  Image Placeholder Sections
+
+```
+![Triangulation Diagram](images/triangulation.png)
+```
+
+```
+![Ray Geometry](images/rays.png)
+```
+
+```
+![Reprojection Error Plot](images/reprojection_error.png)
+```
+
+
+
 #  References  
 
 Kannala, J., & Brandt, S. (2006).  
