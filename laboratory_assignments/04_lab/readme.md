@@ -80,6 +80,11 @@ concepts are essential:
 A residual represents the discrepancy between an observed measurement and the
 prediction made by a model:
 
+$$
+x = {-b \pm \sqrt{b^2-4ac} \over 2a}
+$$
+
+
 &&
 r_i = y_i - \hat{y}_i
 &&
