@@ -267,6 +267,9 @@ $$
 
 5. **Project ground-truth 3D points** for comparison before optimization.
 
+<img width="1895" height="901" alt="image" src="https://github.com/user-attachments/assets/c37114f2-ad2c-4764-a6c3-1c87c6f80093" />
+
+
 ## **2.2 Residual Function**
 
 Template:
@@ -368,7 +371,8 @@ $$
 - Visualize final reconstruction  
 
 **Figure:**  
-*(Insert when available)*
+<img width="1899" height="830" alt="image" src="https://github.com/user-attachments/assets/ca2ea862-075f-4843-96ac-447a2e6d4f29" />
+
 
 ---
 
@@ -381,7 +385,8 @@ $$
 - Numerical error analysis  
 
 **Example figure:**  
-*(Insert when available)*
+<img width="846" height="794" alt="image" src="https://github.com/user-attachments/assets/2ee8e4c9-5a54-4c98-b134-f10bbe45aa9c" />
+
 
 ---
 
