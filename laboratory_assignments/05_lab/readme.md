@@ -2,6 +2,34 @@
 **MRGCV Unizar — Computer Vision**  
 **Authors:** Wilson Javier Almario (962449), Diego Méndez (960616)
 
+# 📑 Index — Laboratory 5: Omnidirectional Vision (Fisheye / Kannala-Brandt)
+
+## **1. Kannala-Brandt Fisheye Model**
+- [1.1 Projection — `projectKannalaBrandt`](#1-projectkannalabrandtpck-d)
+- [1.2 Newton Solver — `_newton_solve_theta`](#2-_newton_solve_thetard-k1-k2-k3-k4)
+- [1.3 Unprojection — `unprojectKannalaBrandt`](#3-unprojectkannalabrandtuv-k-d-)
+- [1.4 Validation Pipeline — `testingKannalaBrandt`](#4-testingkannalabrandt)
+- [1.5 Numerical Results](#kannala-brandt-camera-model)
+
+---
+
+## **2. 3D Triangulation Using Calibrated Stereo**
+- [2.1 Ray–Ray Triangulation — `triangulate_two_rays`](#1-triangulate_two_raysc1-d1-c2-d2)
+- [2.2 Fisheye Stereo Triangulation — `triangulate_poseA_kb`](#2-triangulate_posea_kb)
+- [2.3 Reconstruction Pipeline + Depth Validation](#3-main-program--triangulation--validation)
+- [2.4 Reprojection Error Evaluation](#reprojection-error-using-kb-model)
+
+---
+
+## **3. Bundle Adjustment for Fisheye Stereo (Optional)**
+- [3.1 Residual Function — `resBundleFisheyeStereo`](#1-resbundlefisheyestereoop---residual-function)
+- [3.2 Optimization — `bundleAdjustmentFisheyeStereo`](#bundleadjustmentfisheyestereo)
+- [3.3 BA Execution Pipeline](#3-main-program--running-ba)
+- [3.4 Final RMS Error and Metrics](#ba-output-metrics)
+
+
+
+
 ---
 
 ##  Overview  
@@ -833,22 +861,6 @@ RMS reprojection error: 0.422190 pixels
 Success: True
 Iterations: 293
 ```
-
-#  Image Placeholder Sections
-
-```
-![BA Pipeline](images/ba_pipeline.png)
-```
-
-```
-![Residual Evolution](images/residuals.png)
-```
-
-```
-![3D Structure Before/After BA](images/ba_structure.png)
-```
-
----
 
 #  References  
 
