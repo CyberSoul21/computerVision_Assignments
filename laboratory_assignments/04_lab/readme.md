@@ -222,44 +222,40 @@ Pipeline steps:
 
 1. **Compute the Essential Matrix**
 
-   $$
-   E = K^\top F K
-   $$
+$$
+E = K^\top F K
+$$
 
 3. **Decompose \(E\)** into the four possible camera poses:
-   $$
-   (R, t),\; (R, -t),\; (R', t),\; (R', -t)
-   $$
+$$
+(R, t),\; (R, -t),\; (R', t),\; (R', -t)
+$$
 
 4. **Prepare 2D points** for triangulation  
    - Convert homogeneous points to (u, v)
 
 5. **Select the physically correct pose** using the cheirality condition:  
    Points must satisfy:
-   $$
-   Z_1 > 0 \quad \text{and} \quad Z_2 > 0
-   $$
+$$
+Z_1 > 0 \quad \text{and} \quad Z_2 > 0
+$$
 
 6. **Triangulate initial 3D points** using the selected pose.
 
 7. **Construct the initial transformation**
-   $$
-   T_{21} =
-   \begin{bmatrix}
-   R_{21} & t_{21} \\
-   0 & 1
-   \end{bmatrix}
-   $$
+$$
+T_{21} = \begin{bmatrix} R_{21} & t_{21} \\ 0 & 1 \end{bmatrix}
+$$
 
 ---
 
 ### **Step 2 — Initial Residual Visualization**
 
 1. **Project initial 3D points** onto both cameras:
-   $$
-   \hat{x}_1 = K[I|0]X,\qquad 
-   \hat{x}_2 = K[R_{21}|t_{21}]X
-   $$
+$$
+\hat{x}_1 = K[I|0]X,\qquad 
+\hat{x}_2 = K[R_{21}|t_{21}]X
+$$
 
 2. **Normalize projections** (divide by \(z\)).
 
